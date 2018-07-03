@@ -1,6 +1,6 @@
 import React from 'react';
-import { List, ListItem } from 'react-native-elements'
-import { View, Text, Button, AsyncStorage, ScrollView } from 'react-native';
+import { List, ListItem, Card, Text } from 'react-native-elements'
+import { View, Button, AsyncStorage, ScrollView } from 'react-native';
 import RefreshView from 'react-native-pull-to-refresh';
 
 export default class ScoreScreen extends React.Component {
@@ -55,37 +55,83 @@ export default class ScoreScreen extends React.Component {
 
   componentWillMount() {
     this.readAccountData()
+    console.log("componentWillMount")
+  }
+
+  componentWillReceiveProps() {
+    this.readAccountData()
+    console.log("componentWillReceiveProps")
   }
 
   render() {
-    const { navigation } = this.props;
+    console.log("render")
 
-    var success = navigation.getParam('success', false);
-    if (success) {
-      this.readAccountData();
+    const gpList = {
+      'A+': 4.3,
+      'A': 4,
+      'A-': 3.7,
+      'B+': 3.3,
+      'B': 3.0,
+      'B-': 2.7,
+      'C+': 2.3,
+      'C': 2,
+      'C-': 1.7,
+      'D': 1,
+      'E': 0,
+      'X': 0
     }
 
     var renderContext;
 
+
+
     if (this.state.login) {
+      const nowSubjectNum = this.state.stuScore['score'].reduce((a, b) => a + (b['score'] in gpList), 0),
+        totalSubjectNum = this.state.stuScore['score'].length,
+        nowCredit = this.state.stuScore['score'].reduce((a, b) => a + (parseInt(b['credit']) * (b['score'] in gpList)), 0),
+        totalCredit = this.state.stuScore['score'].reduce((a, b) => a + parseInt(b['credit']), 0),
+        GPA = this.state.stuScore['score'].reduce((a, b) => a + (parseInt(b['credit']) * ((b['score'] in gpList) && gpList[b['score']])), 0) / nowCredit;
       renderContext = (
         <RefreshView onRefresh={() => this.updateScore()}>
           {this.state.stuScore['score'].length !== 0 ?
-          <ScrollView>
-            {
-              this.state.stuScore['score'].map((l, i) => (
-                <ListItem
-                  key={i}
-                  title={l.name}
-                  subtitle={l.id + "・" + l.credit + " 學分"}
-                  badge={{ value: l.score }}
-                />
-              ))
-            }
-          </ScrollView>
-          :<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>往下拉一下，讓你的成績載入進來</Text>
-          </View>
+            <ScrollView>
+              <Card title="Overview" containerStyle={{ marginBottom: 15 }}>
+                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+                  <View>
+                    <Text h4 style={{ textAlign: 'center', }}>
+                      {nowSubjectNum}/{totalSubjectNum}
+                    </Text>
+                    <Text>公布進度</Text>
+                  </View>
+                  <View>
+                    <Text h4 style={{ textAlign: 'center' }}>
+                      {nowCredit}/{totalCredit}
+                    </Text>
+                    <Text>目前取得學分</Text>
+                  </View>
+                  <View>
+                    <Text h4 style={{ textAlign: 'center' }}>
+                      {GPA.toFixed(2)}
+                    </Text>
+                    <Text>目前 GPA</Text>
+                  </View>
+                </View>
+              </Card>
+              {
+                this.state.stuScore['score'].map((l, i) => (
+                  <ListItem
+                    key={i}
+                    title={l.name}
+                    subtitle={l.id + "・" + l.credit + " 學分"}
+                    badge={{ value: l.score }}
+                  />
+                ))
+              }
+            </ScrollView>
+            :
+            (<Card>
+              <Text>往下拉一下，讓你的成績載入進來</Text>
+            </Card>)
           }
         </RefreshView>
       )

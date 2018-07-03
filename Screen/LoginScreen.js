@@ -25,23 +25,32 @@ export default class LoginScreen extends Component {
           style={{ height: 40, width: WIDTH }}
           placeholder="學號"
           onChangeText={(studentno) => this.setState({ studentno: studentno })}
+          returnKeyType = { "next" }
+          onSubmitEditing={() => { this.birthdayTextInput.focus(); }}
         />
         <TextInput
           style={{ height: 40, width: WIDTH }}
           placeholder="生日"
           onChangeText={(birthday) => this.setState({ birthday: birthday })}
+          ref={(input) => { this.birthdayTextInput = input; }}
+          returnKeyType = { "next" }
+          onSubmitEditing={() => { this.idcardTextInput.focus(); }}
         />
         <TextInput
           style={{ height: 40, width: WIDTH }}
           placeholder="身分證字號"
           onChangeText={(idcard) => this.setState({ idcard: idcard })}
           secureTextEntry={true}
+          ref={(input) => { this.idcardTextInput = input; }}
+          returnKeyType = { "next" }
+          onSubmitEditing={() => { this.passwordTextInput.focus(); }}
         />
         <TextInput
           style={{ height: 40, width: WIDTH }}
           placeholder="密碼"
           onChangeText={(password) => this.setState({ password: password })}
           secureTextEntry={true}
+          ref={(input) => { this.passwordTextInput = input; }}
         />
         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
           <ButtonSubmit
