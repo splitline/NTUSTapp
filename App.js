@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import LoginScreen from './Screen/LoginScreen'
 import ScoreScreen from './Screen/ScoreScreen'
+import PastScoreScreen from './Screen/PastScoreScreen'
 
 export default class App extends React.Component {
   render() {
@@ -18,6 +19,12 @@ const DrawerNav = createDrawerNavigator({
     screen: ScoreScreen,
     navigationOptions: {
       drawerLabel: "成績查詢",
+    }
+  },
+  PastScoreScreen: {
+    screen: PastScoreScreen,
+    navigationOptions: {
+      drawerLabel: "歷年成績",
     }
   }
 });
@@ -41,6 +48,17 @@ const StackNav = createStackNavigator({
             />
           }
           centerComponent={{ text: 'NTUSTapp', style: { color: '#fff', fontSize: 18 } }}
+          rightComponent={
+            <Button
+              clear
+              icon={{
+                name: 'person',
+                color: '#fff'
+              }}
+              title=""
+              onPress={() => { navigation.navigate('Login') }}
+            />
+          }
           innerContainerStyles={{marginTop: Platform.OS === 'ios' ? 0 :  24}}
           outerContainerStyles={{height: 70}}
         />
