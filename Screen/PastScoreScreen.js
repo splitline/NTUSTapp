@@ -9,6 +9,7 @@ export default class PastScoreScreen extends React.Component {
   };
   constructor() {
     super();
+    this.readAccountData()
     this.state = {
       login: false,
       stuAccountData: {},
@@ -51,16 +52,6 @@ export default class PastScoreScreen extends React.Component {
           JSON.stringify(res)
         );
       });
-  }
-
-  componentWillMount() {
-    this.readAccountData()
-    console.log("componentWillMount")
-  }
-
-  componentWillReceiveProps() {
-    this.readAccountData()
-    console.log("componentWillReceiveProps")
   }
 
   render() {

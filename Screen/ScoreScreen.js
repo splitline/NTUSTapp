@@ -9,6 +9,8 @@ export default class ScoreScreen extends React.Component {
   };
   constructor() {
     super();
+    this.readAccountData();
+    console.log("constructor")
     this.state = {
       login: false,
       stuAccountData: {},
@@ -53,10 +55,9 @@ export default class ScoreScreen extends React.Component {
       });
   }
 
-  componentWillMount() {
-    this.readAccountData()
-    console.log("componentWillMount")
-  }
+  // componentWillMount() {
+    
+  // }
 
   componentWillReceiveProps() {
     this.readAccountData()
@@ -82,8 +83,6 @@ export default class ScoreScreen extends React.Component {
     }
 
     var renderContext;
-
-
 
     if (this.state.login) {
       const nowSubjectNum = this.state.stuScore['score'].reduce((a, b) => a + (b['score'] in gpList), 0),
