@@ -1,13 +1,13 @@
 # NTUSTapp
-一個屬於台科人的 app！
+> 一個屬於台科人的 App
 
 ## 開發工具
 React Native with Expo
 
 ## Features
-### Timetable (In progress)
-- 每週課表
-- 教室查詢
+### Timetable
+- 個人課表
+- 課程資訊 (In progress)
 - 離線瀏覽
 
 ### Score
@@ -20,12 +20,17 @@ React Native with Expo
 
 ## Release Notes
 
+### v0.2.0
+- (酷炫) 學校試圖阻止學生使用 app 登入
+- (新增) 個人課表
+- (新增) 搜尋空教室
+
 ### v0.1.0beta2
-- (修正) 移除多餘/不必要的權限要求
+- (修正) 移除不必要/多餘的權限要求。
 
 ### v0.1.0beta [初版]
 - (新增) 學期成績
-- (新增) GPA即時試算
+- (新增) GPA即時試算（依照公布進度）
 - (新增) 修課歷史紀錄
 
 ## 測試執行

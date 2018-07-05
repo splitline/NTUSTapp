@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, TextInputm, ActivityIndicator } from 'react-native';
+import { View, ScrollView, TextInput, ActivityIndicator } from 'react-native';
 import { Text, Card, ListItem } from 'react-native-elements';
 import { Dropdown } from 'react-native-material-dropdown';
 import cheerio from 'cheerio'
@@ -52,7 +52,7 @@ export default class EmptyClassroomView extends React.Component {
                             classrooms[nowClassroom].push($(elem).text().trim());
                     })
                 })
-                // console.log(classrooms)
+
                 this.setState({ classrooms: classrooms, loading: false });
             });
     }
@@ -83,11 +83,9 @@ export default class EmptyClassroomView extends React.Component {
             if (parseInt(timecode) >= parseInt(this.period[i][0]) && parseInt(timecode) <= parseInt(this.period[i][1])) {
                 nthClass = i;
                 break;
-            } else if (parseInt(timecode) >= parseInt(this.period[i][1]) && parseInt(timecode) <= parseInt(this.period[i + 1][0])) {
+            } else if (i + 1 <= 14 && parseInt(timecode) >= parseInt(this.period[i][1]) && parseInt(timecode) <= parseInt(this.period[i + 1][0])) {
                 nthClass = i + 1;
                 break;
-            } else {
-                // console.log(parseInt(timecode), parseInt(this.period[i][0]), parseInt(timecode), parseInt(this.period[i][1]))
             }
         }
         this.setState({ nthClass: nthClass })
@@ -137,7 +135,7 @@ export default class EmptyClassroomView extends React.Component {
                         }
                         onChangeText={(nthClass) => {
                             this.setState({ nthClass: nthClass });
-                            // console.log(nthClass)
+
                         }}
                     />
                 </Card >

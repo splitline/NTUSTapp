@@ -4,6 +4,7 @@
     "icon": "NTUST.png",
     "sdkVersion": "27.0.0",
     "version": "0.1.0beta2",
+    "privacy": "public",
     "githubUrl": "https://github.com/splitline/NTUSTapp",
     "ios": {
       "supportsTablet": true,
@@ -12,7 +13,7 @@
     "android": {
       "package": "com.splitline.ntustapp",
       "permissions": ["default"],
-      "versionCode": 2
+      "versionCode": 3
     }
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, ListItem, Card, Text, Divider } from 'react-native-elements'
-import { View, Button, AsyncStorage, ScrollView } from 'react-native';
+import { View, Button, AsyncStorage, ScrollView, ActivityIndicator } from 'react-native';
 import RefreshView from 'react-native-pull-to-refresh';
 
 export default class PastScoreScreen extends React.Component {
@@ -9,9 +9,8 @@ export default class PastScoreScreen extends React.Component {
   };
   constructor() {
     super();
-    this.readAccountData()
     this.state = {
-      login: false,
+      login: null,
       stuAccountData: {},
       stuScore: { score: [], rank_list: [], score_history: [] }
     };
@@ -30,6 +29,10 @@ export default class PastScoreScreen extends React.Component {
     });
   }
 
+  componentWillMount() {
+    this.readAccountData();
+  }
+
   updateScore() {
     return fetch('https://ntuster.herokuapp.com/api/score/', {
       method: 'POST',
@@ -43,7 +46,7 @@ export default class PastScoreScreen extends React.Component {
         return response.json();
       })
       .catch((error) => {
-        console.log('Request failed', error)
+
       })
       .then((res) => {
         this.setState({ stuScore: res })
@@ -55,8 +58,6 @@ export default class PastScoreScreen extends React.Component {
   }
 
   render() {
-    console.log("render")
-
     const gpList = {
       'A+': 4.3,
       'A': 4,
@@ -74,9 +75,7 @@ export default class PastScoreScreen extends React.Component {
 
     var renderContext;
 
-
-
-    if (this.state.login) {
+    if (this.state.login === true) {
       // const nowSubjectNum = this.state.stuScore['score_history'].reduce((a, b) => a + (b['score_history'] in gpList), 0),
       //   totalSubjectNum = this.state.stuScore['score_history'].length,
       //   nowCredit = this.state.stuScore['score_history'].reduce((a, b) => a + (parseInt(b['credit']) * (b['score_history'] in gpList)), 0),
@@ -84,7 +83,7 @@ export default class PastScoreScreen extends React.Component {
       //   GPA = this.state.stuScore['score_history'].reduce((a, b) => a + (parseInt(b['credit']) * ((b['score_history'] in gpList) && gpList[b['score_history']])), 0) / nowCredit;
       var scoreList = [];
       for (semester in this.state.stuScore['score_history']) {
-        scoreList.push(<Text key={semester} style={{margin:10}}>{semester}</Text>)
+        scoreList.push(<Text key={semester} style={{ margin: 10 }}>{semester}</Text>)
         scoreList.push(
           this.state.stuScore['score_history'][semester].map((l, i) => (
             <ListItem
@@ -101,7 +100,7 @@ export default class PastScoreScreen extends React.Component {
         <RefreshView onRefresh={() => this.updateScore()}>
           {Object.keys(this.state.stuScore['score_history']).length !== 0 ?
             <ScrollView>
-              { scoreList }
+              {scoreList}
             </ScrollView>
             :
             (<Card>
@@ -110,7 +109,7 @@ export default class PastScoreScreen extends React.Component {
           }
         </RefreshView>
       )
-    } else {
+    } else if (this.state.login === false) {
       renderContext = (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text>還沒登入 QQ</Text>
@@ -118,6 +117,12 @@ export default class PastScoreScreen extends React.Component {
             onPress={() => this.props.navigation.navigate('Login')}
             title="登入"
           />
+        </View>
+      )
+    } else {
+      renderContext = (
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <ActivityIndicator size="large" />
         </View>
       )
     }

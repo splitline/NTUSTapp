@@ -20,12 +20,11 @@ export default class LoginScreen extends Component {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text style={{ fontSize: 42, paddingBottom: 24 }}>NTUSTapp</Text>
-
         <TextInput
           style={{ height: 40, width: WIDTH }}
           placeholder="學號"
           onChangeText={(studentno) => this.setState({ studentno: studentno })}
-          returnKeyType = { "next" }
+          returnKeyType={"next"}
           onSubmitEditing={() => { this.birthdayTextInput.focus(); }}
         />
         <TextInput
@@ -33,7 +32,7 @@ export default class LoginScreen extends Component {
           placeholder="生日"
           onChangeText={(birthday) => this.setState({ birthday: birthday })}
           ref={(input) => { this.birthdayTextInput = input; }}
-          returnKeyType = { "next" }
+          returnKeyType={"next"}
           onSubmitEditing={() => { this.idcardTextInput.focus(); }}
         />
         <TextInput
@@ -42,7 +41,7 @@ export default class LoginScreen extends Component {
           onChangeText={(idcard) => this.setState({ idcard: idcard })}
           secureTextEntry={true}
           ref={(input) => { this.idcardTextInput = input; }}
-          returnKeyType = { "next" }
+          returnKeyType={"next"}
           onSubmitEditing={() => { this.passwordTextInput.focus(); }}
         />
         <TextInput

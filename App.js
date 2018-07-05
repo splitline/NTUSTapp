@@ -6,6 +6,7 @@ import LoginScreen from './Screen/LoginScreen'
 import ScoreScreen from './Screen/ScoreScreen'
 import PastScoreScreen from './Screen/PastScoreScreen'
 import EmptyClassroomScreen from './Screen/EmptyClassroomScreen'
+import TimetableScreen from './Screen/TimetableScreen'
 
 export default class App extends React.Component {
   render() {
@@ -31,6 +32,12 @@ const DrawerNav = createDrawerNavigator({
     screen: EmptyClassroomScreen,
     navigationOptions: {
       drawerLabel: "空教室查詢",
+    }
+  },
+  Timetable: {
+    screen: TimetableScreen,
+    navigationOptions: {
+      drawerLabel: "個人課表",
     }
   }
 });

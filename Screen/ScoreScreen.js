@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, ListItem, Card, Text } from 'react-native-elements'
-import { View, Button, AsyncStorage, ScrollView } from 'react-native';
+import { View, Button, AsyncStorage, ScrollView, ActivityIndicator } from 'react-native';
 import RefreshView from 'react-native-pull-to-refresh';
 
 export default class ScoreScreen extends React.Component {
@@ -9,10 +9,8 @@ export default class ScoreScreen extends React.Component {
   };
   constructor() {
     super();
-    this.readAccountData();
-    console.log("constructor")
     this.state = {
-      login: false,
+      login: null,
       stuAccountData: {},
       stuScore: { score: [], rank_list: [], score_history: [] }
     };
@@ -44,7 +42,7 @@ export default class ScoreScreen extends React.Component {
         return response.json();
       })
       .catch((error) => {
-        console.log('Request failed', error)
+
       })
       .then((res) => {
         this.setState({ stuScore: res })
@@ -55,18 +53,15 @@ export default class ScoreScreen extends React.Component {
       });
   }
 
-  // componentWillMount() {
-    
-  // }
+  componentWillMount() {
+    this.readAccountData();
+  }
 
   componentWillReceiveProps() {
-    this.readAccountData()
-    console.log("componentWillReceiveProps")
+    this.readAccountData();
   }
 
   render() {
-    console.log("render")
-
     const gpList = {
       'A+': 4.3,
       'A': 4,
@@ -84,7 +79,7 @@ export default class ScoreScreen extends React.Component {
 
     var renderContext;
 
-    if (this.state.login) {
+    if (this.state.login === true) {
       const nowSubjectNum = this.state.stuScore['score'].reduce((a, b) => a + (b['score'] in gpList), 0),
         totalSubjectNum = this.state.stuScore['score'].length,
         nowCredit = this.state.stuScore['score'].reduce((a, b) => a + (parseInt(b['credit']) * (b['score'] in gpList)), 0),
@@ -134,7 +129,7 @@ export default class ScoreScreen extends React.Component {
           }
         </RefreshView>
       )
-    } else {
+    } else if (this.state.login === false) {
       renderContext = (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text>還沒登入 QQ</Text>
@@ -142,6 +137,12 @@ export default class ScoreScreen extends React.Component {
             onPress={() => this.props.navigation.navigate('Login')}
             title="登入"
           />
+        </View>
+      )
+    } else {
+      renderContext = (
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <ActivityIndicator size="large" />
         </View>
       )
     }
