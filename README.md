@@ -19,6 +19,7 @@ React Native with Expo
 - 搜尋空教室
 
 ## Release Notes
+- Google Play: https://play.google.com/store/apps/details?id=com.splitline.ntustapp
 
 ### v0.2.0
 - (酷炫) 學校試圖阻止學生使用 app 登入
