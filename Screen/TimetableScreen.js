@@ -2,7 +2,8 @@ import React from 'react';
 import { StyleSheet, RefreshControl, ScrollView, ActivityIndicator, AsyncStorage, Button } from 'react-native';
 import { Text, Card, ListItem } from 'react-native-elements';
 import ScrollableTabView, { DefaultTabBar } from 'react-native-scrollable-tab-view';
-import RefreshView from 'react-native-pull-to-refresh';
+import cheerio from 'cheerio';
+import Login from '../utils/funcLogin';
 
 export default class TimetableScreen extends React.Component {
 
@@ -15,6 +16,34 @@ export default class TimetableScreen extends React.Component {
             refreshing: false,
         };
         this.readAccountData();
+    }
+
+    DAYS = {
+        "M": 1,
+        "T": 2,
+        "W": 3,
+        "R": 4,
+        "F": 5,
+        "S": 6,
+        "U": 7,
+    }
+
+    TIMES = {
+        '0': '07:10-08:00',
+        '1': '08:10-09:00',
+        '2': '09:10-10:00',
+        '3': '10:20-11:10',
+        '4': '11:20-12:10',
+        '5': '12:20-13:10',
+        '6': '13:20-14:10',
+        '7': '14:20-15:10',
+        '8': '15:30-16:20',
+        '9': '16:30-17:20',
+        '10': '17:30-18:20',
+        'A': '18:25-19:15',
+        'B': '19:20-20:10',
+        'C': '20:10-21:05',
+        'D': '21:10-22:00'
     }
 
     readAccountData() {
@@ -31,64 +60,121 @@ export default class TimetableScreen extends React.Component {
     }
 
     componentWillMount() {
-        this.readAccountData()
+        this.readAccountData();
     }
 
     updateTimetable() {
-        // console.log (this.state.stuAccountData);
-        this.setState({ refreshing: true })
-        return fetch('http://ntuster.herokuapp.com/api/schedule/', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
+
+        this.setState({ refreshing: true });
+
+        return Login(
+            this.state.stuAccountData,
+            ($, __VIEWSTATE) => {
+
+                let formData = new FormData();
+                let fdata = {
+                    __EVENTTARGET: '',
+                    __EVENTARGUMENT: '',
+                    __VIEWSTATE: __VIEWSTATE,
+                    __VIEWSTATEGENERATOR: '772D720D',
+                    Button19: "登入系統"
+                }
+                Object.keys(fdata).forEach((key) => {
+                    formData.append(key, fdata[key]);
+                })
+                return fetch('https://stu255.ntust.edu.tw/ntust_stu/stu_menu.aspx', {
+                    method: 'POST',
+                    mode: 'cors',
+                    credentials: "include",
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0',
+                    },
+                    body: formData
+                });
             },
-            body: JSON.stringify(this.state.stuAccountData),
-        })
-            .then((response) => {
-                return response.json();
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-            .then((res) => {
-                this.setState({ stuTimetable: res, refreshing: false })
+            // Failed
+        )
+            .then((result) => result.text())
+            .then(async (html) => {
+                let $ = cheerio.load(html);
+                let stuTimetable = {}
+                let fetchArr = [];
+
+                $("#Table7").find('tr').each((i, elem) => {
+                    let td = $(elem).find('td')[2].firstChild.firstChild;
+                    let courseLink = $(td).attr('href');
+                    // fetch outline link
+                    fetchArr.push(fetch(courseLink).then((r) => r.text()));
+                });
+
+                var data = await Promise.all(fetchArr);
+
+                data.forEach((html, i) => {
+                    let $ = cheerio.load(html);
+                    let periods = [];
+                    let classTime = $("#lbl_timenode").text();
+
+                    classTime.split("   ").forEach((val, i) => {
+
+                        let regex = new RegExp(/(\w\w)\((\S+)?\)/);
+                        let result = regex.exec(val);
+
+                        if(result)
+                            periods.push({
+                                day_code: result[1],
+                                location: result[2],
+                                day: this.DAYS[result[1][0]],
+                                time: result[1]? this.TIMES[result[1].slice(1)]: null
+                            });
+                        
+                    })
+
+                    stuTimetable[$("#lbl_courseno").text()] = {
+                        "course_id": $("#lbl_courseno").text(),
+                        "name": $("#lbl_coursename").text(),
+                        "lecturer": $("#lbl_teacher").text(),
+                        "classroom": $("#lbl_timenode").text(),
+                        "periods": periods
+                    };
+                });
+
+
+                this.setState({ stuTimetable: stuTimetable, refreshing: false });
                 AsyncStorage.setItem(
                     '@NTUSTapp:stuTimetable',
-                    JSON.stringify(res)
+                    JSON.stringify(stuTimetable)
                 );
+
             });
     }
 
     render() {
-
-
         const classTime = [].concat(...(Object.keys(this.state.stuTimetable).map(
             (l, i) => {
                 return this.state.stuTimetable[l]['periods'].map(
                     (p) => {
-                        p['course_id'] = this.state.stuTimetable[l]['course_id']
-                        p['name'] = this.state.stuTimetable[l]['name']
-                        p['lecturer'] = this.state.stuTimetable[l]['lecturer']
-                        return p
+                        p['course_id'] = this.state.stuTimetable[l]['course_id'];
+                        p['name'] = this.state.stuTimetable[l]['name'];
+                        p['lecturer'] = this.state.stuTimetable[l]['lecturer'];
+                        return p;
                     }
-                )
+                );
             }))
         ).sort((x, y) => {
-            a = x['day_code']
-            b = y['day_code']
-            dayCode = ["M", "T", "W", "R", "F", "S", "U"]
-            timeCode = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'B', 'C', 'D']
-            return (dayCode.indexOf(a[0]) * 10 + timeCode.indexOf(a[1])) - (dayCode.indexOf(b[0]) * 10 + timeCode.indexOf(b[1]))
+            a = x['day_code'];
+            b = y['day_code'];
+            dayCode = ["M", "T", "W", "R", "F", "S", "U"];
+            timeCode = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'B', 'C', 'D'];
+            return (dayCode.indexOf(a[0]) * 10 + timeCode.indexOf(a[1])) - (dayCode.indexOf(b[0]) * 10 + timeCode.indexOf(b[1]));
         });
 
-        const week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        const week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
         return (
             // <RefreshView onRefresh={() => this.updateTimetable()}>
             <ScrollableTabView
                 renderTabBar={() => <DefaultTabBar backgroundColor='rgb(255, 255, 255)' />}
-                initialPage={(new Date).getDay() - 1}
+                initialPage={(new Date).getDay() == 0 ? 6 : (new Date).getDay() - 1}
             >
                 {
                     [1, 2, 3, 4, 5, 6, 7]

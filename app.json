@@ -1,19 +1,4 @@
 {
-  "expo": {
-    "name": "NTUSTapp",
-    "icon": "NTUST.png",
-    "sdkVersion": "27.0.0",
-    "version": "0.1.0beta2",
-    "privacy": "public",
-    "githubUrl": "https://github.com/splitline/NTUSTapp",
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.splitline.ntustapp"
-    },
-    "android": {
-      "package": "com.splitline.ntustapp",
-      "permissions": ["default"],
-      "versionCode": 3
-    }
-  }
+  "name": "NTUSTapp",
+  "displayName": "NTUSTapp"
 }

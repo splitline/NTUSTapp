@@ -1,18 +1,18 @@
 import React from 'react';
-import { List, ListItem, Card, Text } from 'react-native-elements'
+import { ListItem, Card, Text } from 'react-native-elements';
 import { View, Button, AsyncStorage, ScrollView, ActivityIndicator } from 'react-native';
 import RefreshView from 'react-native-pull-to-refresh';
+import cheerio from 'cheerio';
+import Login from '../utils/funcLogin';
 
 export default class ScoreScreen extends React.Component {
-  static navigationOptions = {
-    drawerLabel: "成績查詢",
-  };
+
   constructor() {
     super();
     this.state = {
       login: null,
       stuAccountData: {},
-      stuScore: { score: [], rank_list: [], score_history: [] }
+      stuScore: { score: [], rank_list: [], score_history: {} }
     };
   }
 
@@ -30,25 +30,68 @@ export default class ScoreScreen extends React.Component {
   }
 
   updateScore() {
-    return fetch('https://ntuster.herokuapp.com/api/score/', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(this.state.stuAccountData),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .catch((error) => {
 
-      })
-      .then((res) => {
-        this.setState({ stuScore: res })
+    return Login(
+      this.state.stuAccountData,
+      ($) => {
+        return fetch('https://stu255.ntust.edu.tw/ntust_stu/Query_Score.aspx', {
+          method: 'GET',
+          mode: 'cors',
+          credentials: "include",
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0',
+          }
+        });
+      },
+      // Failed
+      () => { console.log("Failed Q_Q"); }
+    )
+      .then((result) => result.text())
+      .then((html) => {
+        let $ = cheerio.load(html);
+
+        let stuScore = {
+          score: [],
+          rank_list: [],
+          score_history: {}
+        };
+
+        // current score
+        $('table#Datagrid4 tr').each((i, elem) => {
+          let tr = $(elem).find('td').toArray();
+          if (i)  // if not header row
+            stuScore.score.push({
+              id: $(tr[1]).text().trim(),
+              name: $(tr[2]).text().trim(),
+              credit: $(tr[3]).text().trim(),
+              score: $(tr[4]).text().trim(),
+              note: $(tr[5]).text().trim(),
+              type: $(tr[6]).text().trim()
+            })
+        });
+
+        // past score
+        $('table#DataGrid1 tr').each((i, elem) => {
+          let tr = $(elem).find('td').toArray();
+          console.log(i);
+          if (i) {  // if not header row
+            if(!($(tr[1]).text().trim() in stuScore.score_history))
+              stuScore.score_history[$(tr[1]).text().trim()] = []
+            stuScore.score_history[$(tr[1]).text().trim()].push({
+              id: $(tr[2]).text().trim(),
+              name: $(tr[3]).text().trim(),
+              credit: $(tr[4]).text().trim(),
+              score: $(tr[5]).text().trim(),
+              note: $(tr[6]).text().trim(),
+              type: $(tr[7]).text().trim()
+            })
+          }
+        });
+        console.log(stuScore);
+        this.setState({ stuScore: stuScore });
         AsyncStorage.setItem(
           '@NTUSTapp:stuScore',
-          JSON.stringify(res)
+          JSON.stringify(stuScore)
         );
       });
   }

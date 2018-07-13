@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput } from 'react-native';
-import ButtonSubmit from '../components/ButtonSubmit';
+import ButtonSubmit from '../utils/ButtonSubmit';
 import Dimensions from 'Dimensions';
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
@@ -16,7 +16,7 @@ export default class LoginScreen extends Component {
     };
   }
   render() {
-    const WIDTH = DEVICE_WIDTH - 150
+    const WIDTH = DEVICE_WIDTH - 150;
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text style={{ fontSize: 42, paddingBottom: 24 }}>NTUSTapp</Text>

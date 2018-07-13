@@ -10,6 +10,9 @@ import {
   Alert,
   AsyncStorage
 } from 'react-native';
+
+import Login from "./funcLogin";
+
 import spinner from '../images/Ripple-1.3s-30px.gif';
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
@@ -28,7 +31,6 @@ export default class ButtonSubmit extends Component {
   }
 
   _onPress() {
-    // Alert.alert()
 
     if (this.state.isLoading) return;
 
@@ -39,42 +41,42 @@ export default class ButtonSubmit extends Component {
       easing: Easing.linear,
     }).start();
 
-    fetch('https://ntuster.herokuapp.com/api/login/', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(this.props.data),
-    }).then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson['Success']) {
-          AsyncStorage.setItem(
-            '@NTUSTapp:StuAccountData',
-            JSON.stringify(this.props.data)
-          );
-          AsyncStorage.setItem(
-            '@NTUSTapp:StuData',
-            JSON.stringify(responseJson['Student'])
-          );
-
-          this._onGrow();
-          setTimeout(() => {
-            this.setState({ isLoading: false });
-            this.buttonAnimated.setValue(0);
-            this.growAnimated.setValue(0);
-            AsyncStorage.setItem('@NTUSTapp:StuAccountData', JSON.stringify(this.props.data))
-            this.props.navigation.navigate('Score', {
-              success: true
-            })
-          }, 300);
-        } else {
+    Login(
+      this.props.data,
+      
+      // Success
+      ($) => {
+        AsyncStorage.setItem(
+          '@NTUSTapp:StuAccountData',
+          JSON.stringify(this.props.data)
+        );
+        AsyncStorage.setItem(
+          '@NTUSTapp:StuData',
+          JSON.stringify({
+            "StuName": $('#studentname').text(),
+            "StuInfo": $('#studentno').text() + "・" + $('#educode').text()
+          })
+        );
+        this._onGrow();
+        setTimeout(() => {
           this.setState({ isLoading: false });
-          this.growAnimated.setValue(0)
-          this.buttonAnimated.setValue(0)
-          Alert.alert(responseJson['Message'])
-        }
-      });
+          this.buttonAnimated.setValue(0);
+          this.growAnimated.setValue(0);
+          this.props.navigation.navigate('Score', {
+            success: true
+          })
+        }, 300);
+      },
+      
+      // Failed
+      (errMsg) => {
+        this.setState({ isLoading: false });
+        this.growAnimated.setValue(0);
+        this.buttonAnimated.setValue(0);
+        Alert.alert(errMsg);
+      }
+    )
+
   }
 
   _onGrow() {

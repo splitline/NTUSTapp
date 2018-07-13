@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView, TextInput, ActivityIndicator } from 'react-native';
 import { Text, Card, ListItem } from 'react-native-elements';
 import { Dropdown } from 'react-native-material-dropdown';
-import cheerio from 'cheerio'
+import cheerio from 'cheerio';
 
 export default class EmptyClassroomView extends React.Component {
 
@@ -26,11 +26,10 @@ export default class EmptyClassroomView extends React.Component {
 
         let formData = new FormData();
         formData.append("__EVENTTARGET", "date_cal");
-        formData.append("__EVENTARGUMENT", diffDays)
-        formData.append("classlist_ddl", this.state.building)
-        formData.append("__VIEWSTATE", "dDw1NTk0MzU4NjE7dDw7bDxpPDE+Oz47bDx0PDtsPGk8Mz47aTw0Pjs+O2w8dDxAMDw7Ozs7Ozs7Ozs7Pjs7Pjt0PDtsPGk8NT47PjtsPHQ8QDA8cDxwPGw8U0Q7PjtsPGw8U3lzdGVtLkRhdGVUaW1lLCBtc2NvcmxpYiwgVmVyc2lvbj0xLjAuNTAwMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODk8MjAxNy0xMi0wNT47Pjs+Pjs+Ozs7Ozs7Ozs7Oz47Oz47Pj47Pj47Pj47Pu5S1476NkYk5hmd81mL76xisA4B")
-        formData.append("__VIEWSTATEGENERATOR", "D2C5BC33")
-
+        formData.append("__EVENTARGUMENT", diffDays);
+        formData.append("classlist_ddl", this.state.building);
+        formData.append("__VIEWSTATE", "dDw1NTk0MzU4NjE7dDw7bDxpPDE+Oz47bDx0PDtsPGk8Mz47aTw0Pjs+O2w8dDxAMDw7Ozs7Ozs7Ozs7Pjs7Pjt0PDtsPGk8NT47PjtsPHQ8QDA8cDxwPGw8U0Q7PjtsPGw8U3lzdGVtLkRhdGVUaW1lLCBtc2NvcmxpYiwgVmVyc2lvbj0xLjAuNTAwMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODk8MjAxNy0xMi0wNT47Pjs+Pjs+Ozs7Ozs7Ozs7Oz47Oz47Pj47Pj47Pj47Pu5S1476NkYk5hmd81mL76xisA4B");
+        formData.append("__VIEWSTATEGENERATOR", "D2C5BC33");
 
         fetch('http://stuinfo.ntust.edu.tw/classroom_user/classroom_usecondition.aspx', {
             method: 'POST',
@@ -39,19 +38,19 @@ export default class EmptyClassroomView extends React.Component {
             .then(response => response.text())
             .catch(error => console.error('Error:', error))
             .then((response) => {
-                let $ = cheerio.load(response)
-                let classrooms = {}
+                let $ = cheerio.load(response);
+                let classrooms = {};
                 $('tr[nowrap=nowrap]').each((i, elem) => {
                     let nowClassroom;
                     $(elem).find('td[nowrap=nowrap]').each((i, elem) => {
                         if (i === 0) {
-                            nowClassroom = $(elem).text().trim()
+                            nowClassroom = $(elem).text().trim();
                             classrooms[nowClassroom] = [];
                         }
                         else
                             classrooms[nowClassroom].push($(elem).text().trim());
-                    })
-                })
+                    });
+                });
 
                 this.setState({ classrooms: classrooms, loading: false });
             });
@@ -88,7 +87,7 @@ export default class EmptyClassroomView extends React.Component {
                 break;
             }
         }
-        this.setState({ nthClass: nthClass })
+        this.setState({ nthClass: nthClass });
     }
     render() {
         const data = [{

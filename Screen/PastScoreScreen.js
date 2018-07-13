@@ -4,9 +4,7 @@ import { View, Button, AsyncStorage, ScrollView, ActivityIndicator } from 'react
 import RefreshView from 'react-native-pull-to-refresh';
 
 export default class PastScoreScreen extends React.Component {
-  static navigationOptions = {
-    drawerLabel: "歷年成績",
-  };
+
   constructor() {
     super();
     this.state = {
@@ -49,7 +47,7 @@ export default class PastScoreScreen extends React.Component {
 
       })
       .then((res) => {
-        this.setState({ stuScore: res })
+        this.setState({ stuScore: res });
         AsyncStorage.setItem(
           '@NTUSTapp:stuScore',
           JSON.stringify(res)
@@ -71,7 +69,7 @@ export default class PastScoreScreen extends React.Component {
       'D': 1,
       'E': 0,
       'X': 0
-    }
+    };
 
     var renderContext;
 
@@ -83,7 +81,7 @@ export default class PastScoreScreen extends React.Component {
       //   GPA = this.state.stuScore['score_history'].reduce((a, b) => a + (parseInt(b['credit']) * ((b['score_history'] in gpList) && gpList[b['score_history']])), 0) / nowCredit;
       var scoreList = [];
       for (semester in this.state.stuScore['score_history']) {
-        scoreList.push(<Text key={semester} style={{ margin: 10 }}>{semester}</Text>)
+        scoreList.push(<Text key={semester} style={{ margin: 10 }}>{semester}</Text>);
         scoreList.push(
           this.state.stuScore['score_history'][semester].map((l, i) => (
             <ListItem
@@ -93,7 +91,7 @@ export default class PastScoreScreen extends React.Component {
               badge={{ value: l.score }}
             />
           ))
-        )
+        );
       }
 
       renderContext = (

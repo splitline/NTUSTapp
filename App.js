@@ -1,12 +1,12 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { AppRegistry, Platform } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
-import LoginScreen from './Screen/LoginScreen'
-import ScoreScreen from './Screen/ScoreScreen'
-import PastScoreScreen from './Screen/PastScoreScreen'
-import EmptyClassroomScreen from './Screen/EmptyClassroomScreen'
-import TimetableScreen from './Screen/TimetableScreen'
+import LoginScreen from './Screen/LoginScreen';
+import ScoreScreen from './Screen/ScoreScreen';
+import PastScoreScreen from './Screen/PastScoreScreen';
+import EmptyClassroomScreen from './Screen/EmptyClassroomScreen';
+import TimetableScreen from './Screen/TimetableScreen';
 
 export default class App extends React.Component {
   render() {
@@ -72,8 +72,8 @@ const StackNav = createStackNavigator({
               onPress={() => { navigation.navigate('Login') }}
             />
           }
-          innerContainerStyles={{marginTop: Platform.OS === 'ios' ? 0 :  24}}
-          outerContainerStyles={{height: 70}}
+          // innerContainerStyles={{marginTop: Platform.OS === 'ios' ? 0 :  24}}
+          // outerContainerStyles={{height: 70}}
         />
       ),
     }),
@@ -94,6 +94,10 @@ const RootStack = createStackNavigator(
     headerMode: 'none',
   }
 );
+
+AppRegistry.registerComponent('NTUSTappLite', () => App)
+
+
 
 // Nav Arch:
 // RootStack {
