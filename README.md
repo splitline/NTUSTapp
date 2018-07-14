@@ -2,7 +2,8 @@
 > 一個屬於台科人的 App
 
 ## 開發工具
-React Native with Expo
+React Native ~~with Expo~~
+- 於 v1.0.0 脫離 Expo 框架，直接採用 native code
 
 ## Features
 ### Timetable
