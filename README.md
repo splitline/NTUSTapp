@@ -35,10 +35,51 @@ React Native ~~with Expo~~
 - (新增) GPA即時試算（依照公布進度）
 - (新增) 修課歷史紀錄
 
-## 測試執行
+## 開發細節
+**[v1.0.0 開始不支援 iOS]**
+### 從原始碼直接執行
 ```
+git clone https://github.com/splitline/NTUSTapp.git
 cd NTUSTapp
-npm start
+npm install
+*確認你的 Android 模擬器已經啟動*
+react-native run-android
 ```
+### 原始碼主要架構
+
+#### /Screen/*.js
+分別為各個頁面的 js。
+
+- LoginScreen.js             登入畫面
+- ScoreScreen.js             當前學期成績
+- PastScoreScreen.js         過去成績紀錄
+- EmptyClassroomScreen.js    空教室查詢
+- TimetableScreen.js         課表
 
 
+#### /NativeModule/*.js
+一些由 Java 撰寫的原生 module。
+
+- VcodeOcr.js    黑魔法。
+    - 使用方式：
+    ```javascript
+    import ocr from './NativeModule/VcodeOcr';
+    ocr.recognize(imagePath)
+        .then((code)=>{
+            console.log("Result:", code);
+        })
+    ```
+
+#### /utils/*.js
+一些小工具（雜項）。
+- ButtonSubmit.js 使用於 登入畫面 的登入按鈕
+- funcLogin.js 用於登入學生資訊系統的 function
+    ```javascript
+    login(
+        data,           // Account Data Object:
+                        // { studentno: "", idcard: "", birthday: "", password: "" }
+        successFunc,    // function successFunc($:cheerio selector of stu_menu, __VIEWSTATE of stu_menu:string)
+        FailedFunc      // function failFunc(errorMsg:string)
+    )
+    ```
+    
