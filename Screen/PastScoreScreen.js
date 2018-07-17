@@ -53,7 +53,7 @@ export default class PastScoreScreen extends React.Component {
       console.log("not login Q_Q");
       fetchScore = Login(
         this.state.stuAccountData,
-        ($) => {
+        (__VIEWSTATE) => {
           return fetch('https://stu255.ntust.edu.tw/ntust_stu/Query_Score.aspx', {
             method: 'GET',
             mode: 'cors',
@@ -174,7 +174,7 @@ export default class PastScoreScreen extends React.Component {
     } else if (this.state.login === false) {
       renderContext = (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text>還沒登入 QQ</Text>
+          <Text>還沒登入 Q_Q</Text>
           <Button
             onPress={() => this.props.navigation.navigate('Login')}
             title="登入"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, RefreshControl, ScrollView, AsyncStorage } from 'react-native';
+import { Button, View, StyleSheet, RefreshControl, ScrollView, AsyncStorage, ActivityIndicator } from 'react-native';
 import { Text, Card, ListItem } from 'react-native-elements';
 import ScrollableTabView, { DefaultTabBar } from 'react-native-scrollable-tab-view';
 import cheerio from 'cheerio';
@@ -92,8 +92,8 @@ export default class TimetableScreen extends React.Component {
         else {
             fetchTimetable = Login(
                 this.state.stuAccountData,
-                ($, __VIEWSTATE) => {
-    
+                (__VIEWSTATE) => {
+
                     let formData = new FormData();
                     let fdata = {
                         __EVENTTARGET: '',
@@ -195,14 +195,15 @@ export default class TimetableScreen extends React.Component {
 
         const week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-        return (
-            <ScrollableTabView
-                renderTabBar={() => <DefaultTabBar backgroundColor='rgb(255, 255, 255)' />}
-                initialPage={(new Date).getDay() == 0 ? 6 : (new Date).getDay() - 1}
-            >
-                {
-                    [1, 2, 3, 4, 5, 6, 7]
-                        .map((l, i) =>
+        let renderContext;
+        if (this.state.login === true)
+            renderContext = (
+                <ScrollableTabView
+                    renderTabBar={() => <DefaultTabBar backgroundColor='rgb(255, 255, 255)' />}
+                    initialPage={(new Date).getDay() == 0 ? 6 : (new Date).getDay() - 1}
+                >
+                    {
+                        [1, 2, 3, 4, 5, 6, 7].map((l, i) =>
                             (
                                 <ScrollView
                                     tabLabel={week[l - 1]}
@@ -235,9 +236,27 @@ export default class TimetableScreen extends React.Component {
                                 </ScrollView>
                             )
                         )
-                }
-            </ScrollableTabView>
-        )
+                    }
+                </ScrollableTabView>
+            );
+        else if (this.state.login === false)
+            renderContext = (
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text>還沒登入 Q_Q</Text>
+                    <Button
+                        onPress={() => this.props.navigation.navigate('Login')}
+                        title="登入"
+                    />
+                </View>
+            )
+        else
+            renderContext = (
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <ActivityIndicator size="large" />
+                </View>
+            )
+
+        return renderContext;
     }
 
 

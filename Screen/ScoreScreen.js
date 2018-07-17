@@ -49,7 +49,7 @@ export default class ScoreScreen extends React.Component {
       console.log("not login Q_Q");
       fetchScore = Login(
         this.state.stuAccountData,
-        ($) => {
+        (__VIEWSTATE) => {
           return fetch('https://stu255.ntust.edu.tw/ntust_stu/Query_Score.aspx', {
             method: 'GET',
             mode: 'cors',
@@ -63,6 +63,7 @@ export default class ScoreScreen extends React.Component {
         () => { console.log("Failed Q_Q"); }
       )
     }
+    
     return fetchScore
       .then((result) => result.text())
       .then((html) => {
@@ -142,6 +143,7 @@ export default class ScoreScreen extends React.Component {
       const nowSubjectNum = this.state.stuScore['score'].reduce((a, b) => a + (b['score'] in gpList), 0),
         totalSubjectNum = this.state.stuScore['score'].length,
         nowCredit = this.state.stuScore['score'].reduce((a, b) => a + (parseInt(b['credit']) * (b['score'] in gpList)), 0),
+        nowPassedCredit = this.state.stuScore['score'].reduce((a, b) => a + (parseInt(b['credit']) * (b['score'] in gpList && gpList[b['score']] >= 1.7)), 0),
         totalCredit = this.state.stuScore['score'].reduce((a, b) => a + parseInt(b['credit']), 0),
         GPA = this.state.stuScore['score'].reduce((a, b) => a + (parseInt(b['credit']) * ((b['score'] in gpList) && gpList[b['score']])), 0) / nowCredit;
       renderContext = (
@@ -163,9 +165,9 @@ export default class ScoreScreen extends React.Component {
                   </View>
                   <View>
                     <Text h4 style={{ textAlign: 'center' }}>
-                      {nowCredit}/{totalCredit}
+                      {nowPassedCredit}/{totalCredit}
                     </Text>
-                    <Text>目前取得學分</Text>
+                    <Text>成功取得學分</Text>
                   </View>
                   <View>
                     <Text h4 style={{ textAlign: 'center' }}>
@@ -196,7 +198,7 @@ export default class ScoreScreen extends React.Component {
     } else if (this.state.login === false) {
       renderContext = (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text>還沒登入 QQ</Text>
+          <Text>還沒登入 Q_Q</Text>
           <Button
             onPress={() => this.props.navigation.navigate('Login')}
             title="登入"

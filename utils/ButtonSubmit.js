@@ -45,7 +45,7 @@ export default class ButtonSubmit extends Component {
       this.props.data,
       
       // Success
-      ($) => {
+      (__VIEWSTATE, $) => {
         AsyncStorage.setItem(
           '@NTUSTapp:StuAccountData',
           JSON.stringify(this.props.data)

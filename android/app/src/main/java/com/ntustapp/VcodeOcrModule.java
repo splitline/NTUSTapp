@@ -2,7 +2,6 @@ package com.ntustapp;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
