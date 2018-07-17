@@ -1,4 +1,4 @@
-package com.ntustapp;
+package com.splitline.ntustapp;
 
 import com.facebook.react.ReactActivity;
 

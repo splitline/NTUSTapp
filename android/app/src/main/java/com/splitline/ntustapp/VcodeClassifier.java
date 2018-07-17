@@ -1,4 +1,4 @@
-package com.ntustapp;
+package com.splitline.ntustapp;
 
 import android.graphics.Bitmap;
 import android.util.Log;

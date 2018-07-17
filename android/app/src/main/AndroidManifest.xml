@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ntustapp">
+    package="com.splitline.ntustapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -25,7 +25,7 @@
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.ntustapp.provider"
+            android:authorities="com.splitline.ntustapp.provider"
             android:exported="false"
             android:grantUriPermissions="true" >
             <meta-data

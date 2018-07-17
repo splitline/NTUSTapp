@@ -1,5 +1,5 @@
 
-package com.ntustapp;
+package com.splitline.ntustapp;
 
 import com.facebook.react.modules.network.OkHttpClientFactory;
 import com.facebook.react.modules.network.ReactCookieJarContainer;

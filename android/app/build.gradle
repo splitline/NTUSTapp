@@ -97,19 +97,29 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.ntustapp"
+        applicationId "com.splitline.ntustapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
+        }
+    }
+    signingConfigs {
+        release {
+            if (project.hasProperty('NTUSTAPP_RELEASE_STORE_FILE')) {
+                storeFile file(NTUSTAPP_RELEASE_STORE_FILE)
+                storePassword NTUSTAPP_RELEASE_STORE_PASSWORD
+                keyAlias NTUSTAPP_RELEASE_KEY_ALIAS
+                keyPassword NTUSTAPP_RELEASE_KEY_PASSWORD
+            }
         }
     }
     splits {
@@ -124,6 +134,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
