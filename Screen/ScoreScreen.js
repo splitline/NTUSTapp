@@ -1,6 +1,6 @@
 import React from 'react';
 import { ListItem, Card, Text } from 'react-native-elements';
-import { View, Button, AsyncStorage, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { Slider, View, Button, AsyncStorage, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import cheerio from 'cheerio';
 import Login from '../utils/funcLogin';
 import isLogin from '../utils/checkLogin'
@@ -13,7 +13,8 @@ export default class ScoreScreen extends React.Component {
       refreshing: false,
       login: null,
       stuAccountData: {},
-      stuScore: { score: [], rank_list: [], score_history: {} }
+      stuScore: { score: [], rank_list: [], score_history: {} },
+      gpaType: 1
     };
   }
 
@@ -63,7 +64,7 @@ export default class ScoreScreen extends React.Component {
         () => { console.log("Failed Q_Q"); }
       )
     }
-    
+
     return fetchScore
       .then((result) => result.text())
       .then((html) => {
@@ -123,7 +124,7 @@ export default class ScoreScreen extends React.Component {
 
   render() {
     const gpList = {
-      'A+': 4.3,
+      'A+': this.state.gpaType == 1 ? (4.3) : (4),
       'A': 4,
       'A-': 3.7,
       'B+': 3.3,
@@ -176,6 +177,18 @@ export default class ScoreScreen extends React.Component {
                     <Text>目前 GPA</Text>
                   </View>
                 </View>
+                <View style={{
+                  flex: 1, alignItems: "center", flexDirection: 'row', justifyContent: 'center',
+                }}>
+                  <Text>4.0 制</Text>
+                  <Slider
+                    value={this.state.gpaType}
+                    onValueChange={(value) => this.setState({ gpaType: value })}
+                    style={{ width: 75 }}
+                    step={1} />
+                  <Text>4.3 制</Text>
+                </View>
+
               </Card>
               {
                 this.state.stuScore['score'].map((l, i) => (
