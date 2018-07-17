@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, RefreshControl, ScrollView, ActivityIndicator, AsyncStorage, Button } from 'react-native';
+import { StyleSheet, RefreshControl, ScrollView, AsyncStorage } from 'react-native';
 import { Text, Card, ListItem } from 'react-native-elements';
 import ScrollableTabView, { DefaultTabBar } from 'react-native-scrollable-tab-view';
 import cheerio from 'cheerio';
 import Login from '../utils/funcLogin';
+import isLogin from '../utils/checkLogin'
 
 export default class TimetableScreen extends React.Component {
 
@@ -15,7 +16,6 @@ export default class TimetableScreen extends React.Component {
             stuTimetable: {},
             refreshing: false,
         };
-        this.readAccountData();
     }
 
     DAYS = {
@@ -63,37 +63,62 @@ export default class TimetableScreen extends React.Component {
         this.readAccountData();
     }
 
-    updateTimetable() {
-
+    async updateTimetable() {
         this.setState({ refreshing: true });
-
-        return Login(
-            this.state.stuAccountData,
-            ($, __VIEWSTATE) => {
-
-                let formData = new FormData();
-                let fdata = {
-                    __EVENTTARGET: '',
-                    __EVENTARGUMENT: '',
-                    __VIEWSTATE: __VIEWSTATE,
-                    __VIEWSTATEGENERATOR: '772D720D',
-                    Button19: "登入系統"
-                }
-                Object.keys(fdata).forEach((key) => {
-                    formData.append(key, fdata[key]);
-                })
-                return fetch('https://stu255.ntust.edu.tw/ntust_stu/stu_menu.aspx', {
-                    method: 'POST',
-                    mode: 'cors',
-                    credentials: "include",
-                    headers: {
-                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0',
-                    },
-                    body: formData
-                });
-            },
-            // Failed
-        )
+        const logined = await isLogin();
+        let fetchTimetable;
+        if (logined.status) {
+            let formData = new FormData();
+            let fdata = {
+                __EVENTTARGET: '',
+                __EVENTARGUMENT: '',
+                __VIEWSTATE: logined.__VIEWSTATE,
+                __VIEWSTATEGENERATOR: '772D720D',
+                Button19: "登入系統"
+            }
+            Object.keys(fdata).forEach((key) => {
+                formData.append(key, fdata[key]);
+            })
+            fetchTimetable = fetch('https://stu255.ntust.edu.tw/ntust_stu/stu_menu.aspx', {
+                method: 'POST',
+                mode: 'cors',
+                credentials: "include",
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0',
+                },
+                body: formData
+            });
+        }
+        else {
+            fetchTimetable = Login(
+                this.state.stuAccountData,
+                ($, __VIEWSTATE) => {
+    
+                    let formData = new FormData();
+                    let fdata = {
+                        __EVENTTARGET: '',
+                        __EVENTARGUMENT: '',
+                        __VIEWSTATE: __VIEWSTATE,
+                        __VIEWSTATEGENERATOR: '772D720D',
+                        Button19: "登入系統"
+                    }
+                    Object.keys(fdata).forEach((key) => {
+                        formData.append(key, fdata[key]);
+                    })
+                    return fetch('https://stu255.ntust.edu.tw/ntust_stu/stu_menu.aspx', {
+                        method: 'POST',
+                        mode: 'cors',
+                        credentials: "include",
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0',
+                        },
+                        body: formData
+                    });
+                },
+                // Failed
+            )
+        }
+        fetchTimetable
             .then((result) => result.text())
             .then(async (html) => {
                 let $ = cheerio.load(html);
@@ -109,24 +134,24 @@ export default class TimetableScreen extends React.Component {
 
                 var data = await Promise.all(fetchArr);
 
-                data.forEach((html, i) => {
+                data.forEach((html) => {
                     let $ = cheerio.load(html);
                     let periods = [];
                     let classTime = $("#lbl_timenode").text();
 
-                    classTime.split("   ").forEach((val, i) => {
+                    classTime.split("   ").forEach((val) => {
 
                         let regex = new RegExp(/(\w\w)\((\S+)?\)/);
                         let result = regex.exec(val);
 
-                        if(result)
+                        if (result)
                             periods.push({
                                 day_code: result[1],
                                 location: result[2],
                                 day: this.DAYS[result[1][0]],
-                                time: result[1]? this.TIMES[result[1].slice(1)]: null
+                                time: result[1] ? this.TIMES[result[1].slice(1)] : null
                             });
-                        
+
                     })
 
                     stuTimetable[$("#lbl_courseno").text()] = {
@@ -171,7 +196,6 @@ export default class TimetableScreen extends React.Component {
         const week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
         return (
-            // <RefreshView onRefresh={() => this.updateTimetable()}>
             <ScrollableTabView
                 renderTabBar={() => <DefaultTabBar backgroundColor='rgb(255, 255, 255)' />}
                 initialPage={(new Date).getDay() == 0 ? 6 : (new Date).getDay() - 1}
@@ -213,7 +237,6 @@ export default class TimetableScreen extends React.Component {
                         )
                 }
             </ScrollableTabView>
-            // </RefreshView>
         )
     }
 

@@ -5,7 +5,7 @@ import ocr from '../NativeModule/VcodeOcr';
 
 export default function login(
     data,           // Object
-    successFunc,    // function successFunc($)
+    successFunc,    // function successFunc($, __VIEWSTATE)
     FailedFunc      // function failFunc(errorMsg)
 ) {
     return fetchBlob
@@ -18,11 +18,13 @@ export default function login(
         credentials: "include"
       })
       .then((res) => {
+        res.session('Vcode');
         console.log('Vcode saved to ', res.path());
         return ocr.recognize(res.path());
       })
       .then((code) => {
         console.log('OCR Result: ', code);
+        fetchBlob.session('Vcode').dispose();
         let formData = new FormData();
         let fdata = {
           '__EVENTTARGET': '',

@@ -134,7 +134,6 @@ export default class EmptyClassroomView extends React.Component {
                         }
                         onChangeText={(nthClass) => {
                             this.setState({ nthClass: nthClass });
-
                         }}
                     />
                 </Card >

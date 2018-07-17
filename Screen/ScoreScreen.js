@@ -1,15 +1,16 @@
 import React from 'react';
 import { ListItem, Card, Text } from 'react-native-elements';
-import { View, Button, AsyncStorage, ScrollView, ActivityIndicator } from 'react-native';
-import RefreshView from 'react-native-pull-to-refresh';
+import { View, Button, AsyncStorage, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import cheerio from 'cheerio';
 import Login from '../utils/funcLogin';
+import isLogin from '../utils/checkLogin'
 
 export default class ScoreScreen extends React.Component {
 
   constructor() {
     super();
     this.state = {
+      refreshing: false,
       login: null,
       stuAccountData: {},
       stuScore: { score: [], rank_list: [], score_history: {} }
@@ -29,23 +30,40 @@ export default class ScoreScreen extends React.Component {
     });
   }
 
-  updateScore() {
-
-    return Login(
-      this.state.stuAccountData,
-      ($) => {
-        return fetch('https://stu255.ntust.edu.tw/ntust_stu/Query_Score.aspx', {
-          method: 'GET',
-          mode: 'cors',
-          credentials: "include",
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0',
-          }
-        });
-      },
-      // Failed
-      () => { console.log("Failed Q_Q"); }
-    )
+  async updateScore() {
+    this.setState({ refreshing: true });
+    const logined = await isLogin();
+    let fetchScore;
+    if (logined.status) {
+      console.log("Logined!!")
+      fetchScore = fetch('https://stu255.ntust.edu.tw/ntust_stu/Query_Score.aspx', {
+        method: 'GET',
+        mode: 'cors',
+        credentials: "include",
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0',
+        }
+      });
+    }
+    else {
+      console.log("not login Q_Q");
+      fetchScore = Login(
+        this.state.stuAccountData,
+        ($) => {
+          return fetch('https://stu255.ntust.edu.tw/ntust_stu/Query_Score.aspx', {
+            method: 'GET',
+            mode: 'cors',
+            credentials: "include",
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:55.0) Gecko/20100101 Firefox/55.0',
+            }
+          });
+        },
+        // Failed
+        () => { console.log("Failed Q_Q"); }
+      )
+    }
+    return fetchScore
       .then((result) => result.text())
       .then((html) => {
         let $ = cheerio.load(html);
@@ -73,10 +91,9 @@ export default class ScoreScreen extends React.Component {
         // past score
         $('table#DataGrid1 tr').each((i, elem) => {
           let tr = $(elem).find('td').toArray();
-          console.log(i);
           if (i) {  // if not header row
-            if(!($(tr[1]).text().trim() in stuScore.score_history))
-              stuScore.score_history[$(tr[1]).text().trim()] = []
+            if (!($(tr[1]).text().trim() in stuScore.score_history))
+              stuScore.score_history[$(tr[1]).text().trim()] = [] // init new semester
             stuScore.score_history[$(tr[1]).text().trim()].push({
               id: $(tr[2]).text().trim(),
               name: $(tr[3]).text().trim(),
@@ -87,8 +104,7 @@ export default class ScoreScreen extends React.Component {
             })
           }
         });
-        console.log(stuScore);
-        this.setState({ stuScore: stuScore });
+        this.setState({ stuScore: stuScore, refreshing: false });
         AsyncStorage.setItem(
           '@NTUSTapp:stuScore',
           JSON.stringify(stuScore)
@@ -129,9 +145,14 @@ export default class ScoreScreen extends React.Component {
         totalCredit = this.state.stuScore['score'].reduce((a, b) => a + parseInt(b['credit']), 0),
         GPA = this.state.stuScore['score'].reduce((a, b) => a + (parseInt(b['credit']) * ((b['score'] in gpList) && gpList[b['score']])), 0) / nowCredit;
       renderContext = (
-        <RefreshView onRefresh={() => this.updateScore()}>
-          {this.state.stuScore['score'].length !== 0 ?
-            <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={() => this.updateScore()}
+            />}>
+          {this.state.stuScore['score'].length !== 0 ?  // is score exist?
+            <View>
               <Card title="Overview" containerStyle={{ marginBottom: 15 }}>
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
                   <View>
@@ -164,13 +185,13 @@ export default class ScoreScreen extends React.Component {
                   />
                 ))
               }
-            </ScrollView>
-            :
+            </View>
+            : // score not exist.
             (<Card>
               <Text>往下拉一下，讓你的成績載入進來</Text>
             </Card>)
           }
-        </RefreshView>
+        </ScrollView>
       )
     } else if (this.state.login === false) {
       renderContext = (
@@ -182,7 +203,7 @@ export default class ScoreScreen extends React.Component {
           />
         </View>
       )
-    } else {
+    } else {  // checking login status
       renderContext = (
         <View style={{ flex: 1, justifyContent: 'center' }}>
           <ActivityIndicator size="large" />
@@ -190,8 +211,6 @@ export default class ScoreScreen extends React.Component {
       )
     }
 
-    return (
-      renderContext
-    );
+    return (renderContext);
   }
 }
