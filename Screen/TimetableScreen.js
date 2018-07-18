@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, View, StyleSheet, RefreshControl, ScrollView, AsyncStorage, ActivityIndicator } from 'react-native';
 import { Text, Card, ListItem } from 'react-native-elements';
 import ScrollableTabView, { DefaultTabBar } from 'react-native-scrollable-tab-view';
+import Snackbar from 'react-native-snackbar';
 import cheerio from 'cheerio';
 import Login from '../utils/funcLogin';
 import isLogin from '../utils/checkLogin'
@@ -90,6 +91,10 @@ export default class TimetableScreen extends React.Component {
             });
         }
         else {
+            Snackbar.show({
+                title: '登入逾時了，重新登入個',
+                duration: Snackbar.LENGTH_SHORT,
+            });
             fetchTimetable = Login(
                 this.state.stuAccountData,
                 (__VIEWSTATE) => {
@@ -186,10 +191,9 @@ export default class TimetableScreen extends React.Component {
                 );
             }))
         ).sort((x, y) => {
-            a = x['day_code'];
-            b = y['day_code'];
-            dayCode = ["M", "T", "W", "R", "F", "S", "U"];
-            timeCode = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'B', 'C', 'D'];
+            let a = x['day_code'], b = y['day_code'];
+            const dayCode = ["M", "T", "W", "R", "F", "S", "U"];
+            const timeCode = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'B', 'C', 'D'];
             return (dayCode.indexOf(a[0]) * 10 + timeCode.indexOf(a[1])) - (dayCode.indexOf(b[0]) * 10 + timeCode.indexOf(b[1]));
         });
 

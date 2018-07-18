@@ -91,6 +91,10 @@ export default class EmptyClassroomView extends React.Component {
     }
     render() {
         const data = [{
+            label: '研揚大樓', value: 'TR'
+        }, {
+            label: '國際大樓', value: 'IB'
+        }, {
             label: '第四教學大樓', value: 'T4'
         }, {
             label: '第三教學大樓', value: 'T3'
@@ -102,10 +106,6 @@ export default class EmptyClassroomView extends React.Component {
             label: '電資館', value: 'EE'
         }, {
             label: '管理大樓', value: 'MA'
-        }, {
-            label: '國際大樓', value: 'IB'
-        }, {
-            label: '研揚大樓', value: 'TR'
         }];
 
         return (
@@ -126,8 +126,10 @@ export default class EmptyClassroomView extends React.Component {
                             Array.apply(null, { length: 14 })
                                 .map(Number.call, Number)
                                 .map((i) => {
+                                    let startTime = this.period[i + 1][0].slice(0,2) + ":" + this.period[i + 1][0].slice(2), 
+                                        endTime = this.period[i + 1][1].slice(0,2) + ":" + this.period[i + 1][1].slice(2);
                                     return {
-                                        'label': "第 " + (i + 1 <= 10 ? i + 1 : String.fromCharCode(65 + i - 10)) + " 堂課",
+                                        'label': `第 ${(i + 1 <= 10 ? i + 1 : String.fromCharCode(65 + i - 10))} 堂課 (${startTime}~${endTime})`,
                                         'value': i + 1
                                     }
                                 })

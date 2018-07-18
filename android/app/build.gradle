@@ -154,6 +154,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-snackbar')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-vector-icons')
     implementation fileTree(dir: "libs", include: ["*.jar"])

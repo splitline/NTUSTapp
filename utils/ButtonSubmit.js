@@ -10,9 +10,8 @@ import {
   Alert,
   AsyncStorage
 } from 'react-native';
-
+import Snackbar from 'react-native-snackbar';
 import Login from "./funcLogin";
-
 import spinner from '../images/Ripple-1.3s-30px.gif';
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
@@ -43,7 +42,7 @@ export default class ButtonSubmit extends Component {
 
     Login(
       this.props.data,
-      
+
       // Success
       (__VIEWSTATE, $) => {
         AsyncStorage.setItem(
@@ -67,13 +66,19 @@ export default class ButtonSubmit extends Component {
           })
         }, 300);
       },
-      
+
       // Failed
       (errMsg) => {
         this.setState({ isLoading: false });
         this.growAnimated.setValue(0);
         this.buttonAnimated.setValue(0);
-        Alert.alert(errMsg);
+        Snackbar.show({
+          title: errMsg,
+          duration: Snackbar.LENGTH_INDEFINITE,
+          action: {
+            title: '好QQ', color: 'green',
+          },
+        })
       }
     )
 

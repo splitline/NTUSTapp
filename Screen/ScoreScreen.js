@@ -2,6 +2,7 @@ import React from 'react';
 import { ListItem, Card, Text } from 'react-native-elements';
 import { Slider, View, Button, AsyncStorage, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import cheerio from 'cheerio';
+import Snackbar from 'react-native-snackbar';
 import Login from '../utils/funcLogin';
 import isLogin from '../utils/checkLogin'
 
@@ -48,6 +49,10 @@ export default class ScoreScreen extends React.Component {
     }
     else {
       console.log("not login Q_Q");
+      Snackbar.show({
+        title: '登入逾時了，重新登入個',
+        duration: Snackbar.LENGTH_SHORT,
+      });
       fetchScore = Login(
         this.state.stuAccountData,
         (__VIEWSTATE) => {
