@@ -68,11 +68,11 @@ export default async function login(
         if (!$('#disp_error').html()) { // Login Success
           retryFlag = false;
           loginSuccess = true;
+          __VIEWSTATE = $('input[name="__VIEWSTATE"]').val();
         } else if (errMsg.includes('驗證碼')) { // Vcode Error
           console.log("Vcode Error", errMsg);
           retryFlag = true;
           loginSuccess = true;
-          __VIEWSTATE = $('input[name="__VIEWSTATE"]').val();
         } else {  // User error
           console.log("normal Error", errMsg);
           retryFlag = false;
