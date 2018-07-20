@@ -23,6 +23,12 @@ React Native ~~with Expo~~
 ## Release Notes
 - Google Play: https://play.google.com/store/apps/details?id=com.splitline.ntustapp
 
+### v1.0
+- (優化) 所有網路請求完全不透過 API，直接連至學校系統
+- (優化) APP 大小減少 7 成以上
+- (優化) Icon 變潮惹（？
+- (新增) 學期分數頁面可切換 GPA 4.0 / 4.3 制
+
 ### v0.2.0
 - (酷炫) 學校試圖阻止學生使用 app 登入
 - (新增) 個人課表
