@@ -1,6 +1,15 @@
-# NTUSTapp
 ![](https://raw.githubusercontent.com/splitline/NTUSTapp/master/banner.png)
+
+# NTUSTapp
+
 > 一個屬於台科人的 App
+
+
+<p>
+    <a href="https://play.google.com/store/apps/details?id=com.splitline.ntustapp">
+        <img src="https://rawgit.com/splitline/NTUSTapp/master/play-store.svg" width="300">
+    </a>
+</p>
 
 ## 開發工具
 React Native ~~with Expo~~
@@ -21,7 +30,6 @@ React Native ~~with Expo~~
 - 搜尋空教室
 
 ## Release Notes
-- Google Play: https://play.google.com/store/apps/details?id=com.splitline.ntustapp
 
 ### v1.0
 - (優化) 所有網路請求完全不透過 API，直接連至學校系統
