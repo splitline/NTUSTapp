@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, ScrollView, TextInput, ActivityIndicator } from 'react-native';
-import { Text, Card, ListItem } from 'react-native-elements';
+import { View, ScrollView, ActivityIndicator } from 'react-native';
+import { Text, Card, ListItem, Button, Icon } from 'react-native-elements';
+import Modal from "react-native-modal";
 import { Dropdown } from 'react-native-material-dropdown';
 import cheerio from 'cheerio';
 
@@ -12,11 +13,22 @@ export default class EmptyClassroomView extends React.Component {
             building: "",
             classrooms: {},
             nthClass: -1,
-            loading: false
+            loading: false,
+
+            modalShow: false,
+            lookingUpClassroom: ""
         };
     }
 
     period = [];
+
+    _toggleModal(classroom) {
+        this.setState({ modalShow: !this.state.modalShow, lookingUpClassroom: (classroom ? classroom : this.state.lookingUpClassroom) });
+    }
+
+    timecodeToTime(str) {
+        return str.slice(0, 2) + ":" + str.slice(2, 4);
+    }
 
     fetchEmptyClassroom() {
         this.setState({ loading: true });
@@ -89,6 +101,7 @@ export default class EmptyClassroomView extends React.Component {
         }
         this.setState({ nthClass: nthClass });
     }
+
     render() {
         const data = [{
             label: '研揚大樓', value: 'TR'
@@ -110,6 +123,52 @@ export default class EmptyClassroomView extends React.Component {
 
         return (
             <ScrollView>
+                <Modal
+                    isVisible={this.state.modalShow}
+                    onBackButtonPress={() => this._toggleModal()}
+                >
+                    <ScrollView style={{
+                        backgroundColor: "white",
+                        padding: 4,
+                        borderRadius: 4,
+                        borderColor: "rgba(0, 0, 0, 0.1)"
+                    }}>
+                        <Card title={`${this.state.lookingUpClassroom} 整天的狀態`} containerStyle={{ margin: 0 }}>
+                            {this.state.lookingUpClassroom in this.state.classrooms
+                                &&
+                                this.state.classrooms[this.state.lookingUpClassroom]
+                                    .map((courseName, i) => (
+                                        <View style={{
+                                            flex: 1,
+                                            flexDirection: 'row',
+                                            backgroundColor: (courseName == "" ? "#f1f5ed" : "#ffffff")
+                                        }} key={i}>
+                                            <View style={{ margin: 10 }}>
+                                                <Text style={{
+                                                    fontSize: 16,
+                                                    color: (courseName == "" ? "#8BB96E" : "#5a5a5a")
+                                                }}>
+                                                    {`${this.timecodeToTime(this.period[i + 1][0])} ~ ${this.timecodeToTime(this.period[i + 1][1])}`}
+                                                </Text>
+                                            </View>
+                                            <View style={{ flex: 1, flexDirection: 'row', margin: 10 }}>
+                                                {courseName == "" && <Icon name="check" color="#8BB96E" containerStyle={{ marginRight: 8 }} />}
+                                                <Text style={{
+                                                    fontSize: 16,
+                                                    color: (courseName == "" ? "#8BB96E" : "#5a5a5a")
+                                                }}>
+                                                    {courseName == "" ? "空教室" : courseName}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    ))
+                            }
+                        </Card>
+                    </ScrollView>
+                    <View style={{ marginTop: 10 }}>
+                        <Button onPress={() => this._toggleModal()} title="好的" />
+                    </View>
+                </Modal>
                 <Card title="空教室查詢" >
                     <Dropdown
                         label='哪棟樓'
@@ -126,8 +185,8 @@ export default class EmptyClassroomView extends React.Component {
                             Array.apply(null, { length: 14 })
                                 .map(Number.call, Number)
                                 .map((i) => {
-                                    let startTime = this.period[i + 1][0].slice(0,2) + ":" + this.period[i + 1][0].slice(2), 
-                                        endTime = this.period[i + 1][1].slice(0,2) + ":" + this.period[i + 1][1].slice(2);
+                                    let startTime = this.timecodeToTime(this.period[i + 1][0]),
+                                        endTime = this.timecodeToTime(this.period[i + 1][1]);
                                     return {
                                         'label': `第 ${(i + 1 <= 10 ? i + 1 : String.fromCharCode(65 + i - 10))} 堂課 (${startTime}~${endTime})`,
                                         'value': i + 1
@@ -153,6 +212,7 @@ export default class EmptyClassroomView extends React.Component {
                                     key={i}
                                     title={l}
                                     leftIcon={{ name: "location-on" }}
+                                    onPress={() => this._toggleModal(l)}
                                     checkmark
                                 />
                             ))
@@ -173,11 +233,12 @@ export default class EmptyClassroomView extends React.Component {
                                     title={l}
                                     subtitle={this.state.classrooms[l][this.state.nthClass - 1]}
                                     leftIcon={{ name: "location-on" }}
+                                    onPress={() => this._toggleModal(l)}
                                 />
                             ))
                     }
                 </Card>
-            </ScrollView >
+            </ScrollView>
         )
     }
 }

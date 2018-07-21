@@ -53,7 +53,7 @@ export default class PastScoreScreen extends React.Component {
     else {
       Snackbar.show({
         title: '登入逾時了，重新登入個',
-        duration: Snackbar.LENGTH_SHORT,
+        duration: Snackbar.LENGTH_LONG,
       });
       fetchScore = Login(
         this.state.stuAccountData,

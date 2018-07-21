@@ -49,6 +49,7 @@ const StackNav = createStackNavigator({
     navigationOptions: ({ navigation }) => ({
       header: (
         <Header
+          outerContainerStyles={{ borderBottomWidth: 0 }}
           leftComponent={
             <Button
               clear
@@ -72,8 +73,8 @@ const StackNav = createStackNavigator({
               onPress={() => { navigation.navigate('Login') }}
             />
           }
-          // innerContainerStyles={{marginTop: Platform.OS === 'ios' ? 0 :  24}}
-          // outerContainerStyles={{height: 70}}
+        // innerContainerStyles={{marginTop: Platform.OS === 'ios' ? 0 :  24}}
+        // outerContainerStyles={{height: 70}}
         />
       ),
     }),

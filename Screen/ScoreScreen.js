@@ -51,7 +51,7 @@ export default class ScoreScreen extends React.Component {
       console.log("not login Q_Q");
       Snackbar.show({
         title: '登入逾時了，重新登入個',
-        duration: Snackbar.LENGTH_SHORT,
+        duration: Snackbar.LENGTH_LONG,
       });
       fetchScore = Login(
         this.state.stuAccountData,
