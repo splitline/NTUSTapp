@@ -6,7 +6,7 @@
 
 <p>
     <a href="https://play.google.com/store/apps/details?id=com.splitline.ntustapp">
-        <img src="https://rawgit.com/splitline/NTUSTapp/master/play-store.svg" width="300">
+        <img src="http://rawgit.com/splitline/NTUSTapp/master/play-store.svg" width="250">
     </a>
 </p>
 
