@@ -14,7 +14,7 @@ export default class PastScoreScreen extends React.Component {
       refreshing: false,
       login: null,
       stuAccountData: {},
-      stuScore: { score: [], rank_list: [], score_history: [] }
+      stuScore: { score: [], rank_list: {}, score_history: [] }
     };
   }
 
@@ -68,18 +68,18 @@ export default class PastScoreScreen extends React.Component {
           });
         },
         // Failed
-        () => {
-        }
+        () => { console.log("Failed Q_Q"); }
       )
     }
+
     return fetchScore
       .then((result) => result.text())
       .then((html) => {
-        let $ = cheerio.load(html);
+        let $ = cheerio.load(html, { decodeEntities: false });
 
         let stuScore = {
           score: [],
-          rank_list: [],
+          rank_list: {},
           score_history: {}
         };
 
@@ -113,6 +113,30 @@ export default class PastScoreScreen extends React.Component {
             })
           }
         });
+
+        let ranks = $("#score_list").find('font').html().split('<br>');
+
+        ranks.forEach((rankStr, i) => {
+          // 105　學年度第　1　學期學期年級(系)排名為第　64  　名，學期平均成績為：3.49  
+          let regex = new RegExp(/(.+)學年度第(.+)學期學期.+\((.+)\)排名為第(.+)名，學期平均成績為：(.+)/);
+          let result = regex.exec(rankStr);
+          if (result) {
+            result = result.map((str) => str.trim());
+            let semester = `${result[1]}${result[2]}`,
+              rankType = result[3],
+              rankN = result[4],
+              GPA = result[5];
+
+            if (!(semester in stuScore.rank_list))  // init rank object
+              stuScore.rank_list[semester] = { gpa: GPA, ranks: [] }
+
+            stuScore.rank_list[semester].ranks.push({
+              rankType: rankType,
+              rankN: rankN
+            })
+          }
+        });
+
         this.setState({ stuScore: stuScore, refreshing: false });
         AsyncStorage.setItem(
           '@NTUSTapp:stuScore',
@@ -140,14 +164,36 @@ export default class PastScoreScreen extends React.Component {
     var renderContext;
 
     if (this.state.login === true) {
-      // const nowSubjectNum = this.state.stuScore['score_history'].reduce((a, b) => a + (b['score_history'] in gpList), 0),
-      //   totalSubjectNum = this.state.stuScore['score_history'].length,
-      //   nowCredit = this.state.stuScore['score_history'].reduce((a, b) => a + (parseInt(b['credit']) * (b['score_history'] in gpList)), 0),
-      //   totalCredit = this.state.stuScore['score_history'].reduce((a, b) => a + parseInt(b['credit']), 0),
-      //   GPA = this.state.stuScore['score_history'].reduce((a, b) => a + (parseInt(b['credit']) * ((b['score_history'] in gpList) && gpList[b['score_history']])), 0) / nowCredit;
       var scoreList = [];
-      for (semester in this.state.stuScore['score_history']) {
-        scoreList.push(<Text key={semester} style={{ margin: 10 }}>{semester}</Text>);
+      for (semester in this.state.stuScore.rank_list) {
+        // scoreList.push(<Text key={semester} style={{ margin: 10 }}>{semester}</Text>);
+        scoreList.push(
+          <Card
+            key={semester}
+            title={semester}
+            containerStyle={{ marginBottom: 10 }}
+          >
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+              <View>
+                <Text h4 style={{ textAlign: 'center', }}>
+                  {this.state.stuScore.rank_list[semester].gpa}
+                      </Text>
+                <Text style={{ textAlign: 'center', }}>GPA</Text>
+              </View>
+              {
+                this.state.stuScore.rank_list[semester].ranks
+                  .map((r, i) => (
+                    <View key={i}>
+                      <Text h4 style={{ textAlign: 'center', }}>
+                        {r.rankN} 名
+                      </Text>
+                      <Text style={{ textAlign: 'center', }}>{r.rankType}排</Text>
+                    </View>
+                  ))
+              }
+            </View>
+          </Card>
+        );
         scoreList.push(
           this.state.stuScore['score_history'][semester].map((l, i) => (
             <ListItem

@@ -221,7 +221,10 @@ export default class TimetableScreen extends React.Component {
                                         classTime.filter((c) => c['day'] === l).length === 0 ?
                                             (
                                                 <Card>
-                                                    <Text>今天沒課 _(:з」∠)_</Text>
+                                                    {classTime.length == 0 ?
+                                                        <Text>往下拉一下，讓你的課表載入進來</Text>
+                                                        : <Text>今天沒課 _(:з」∠)_</Text>
+                                                    }
                                                 </Card>
                                             ) :
                                             (

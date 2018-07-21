@@ -14,7 +14,7 @@ export default class ScoreScreen extends React.Component {
       refreshing: false,
       login: null,
       stuAccountData: {},
-      stuScore: { score: [], rank_list: [], score_history: {} },
+      stuScore: { score: [], rank_list: {}, score_history: {} },
       gpaType: 1
     };
   }
@@ -73,11 +73,11 @@ export default class ScoreScreen extends React.Component {
     return fetchScore
       .then((result) => result.text())
       .then((html) => {
-        let $ = cheerio.load(html);
+        let $ = cheerio.load(html, { decodeEntities: false });
 
         let stuScore = {
           score: [],
-          rank_list: [],
+          rank_list: {},
           score_history: {}
         };
 
@@ -111,6 +111,30 @@ export default class ScoreScreen extends React.Component {
             })
           }
         });
+
+        let ranks = $("#score_list").find('font').html().split('<br>');
+
+        ranks.forEach((rankStr, i) => {
+          // 105　學年度第　1　學期學期年級(系)排名為第　64  　名，學期平均成績為：3.49  
+          let regex = new RegExp(/(.+)學年度第(.+)學期學期(.+)排名為第(.+)名，學期平均成績為：(.+)/);
+          let result = regex.exec(rankStr);
+          if (result) {
+            result = result.map((str) => str.trim());
+            let semester = `${result[1]}${result[2]}`,
+              rankType = result[3],
+              rankN = result[4],
+              GPA = result[5];
+
+            if (!(semester in stuScore.rank_list))  // init rank object
+              stuScore.rank_list[semester] = { gpa: GPA, ranks: [] }
+
+            stuScore.rank_list[semester].ranks.push({
+              rankType: rankType,
+              rankN: rankN
+            })
+          }
+        });
+
         this.setState({ stuScore: stuScore, refreshing: false });
         AsyncStorage.setItem(
           '@NTUSTapp:stuScore',
@@ -167,19 +191,19 @@ export default class ScoreScreen extends React.Component {
                     <Text h4 style={{ textAlign: 'center', }}>
                       {nowSubjectNum}/{totalSubjectNum}
                     </Text>
-                    <Text>公布進度</Text>
+                    <Text style={{ textAlign: 'center', }}>公布進度</Text>
                   </View>
                   <View>
                     <Text h4 style={{ textAlign: 'center' }}>
                       {nowPassedCredit}/{totalCredit}
                     </Text>
-                    <Text>成功取得學分</Text>
+                    <Text style={{ textAlign: 'center', }}>成功取得學分</Text>
                   </View>
                   <View>
                     <Text h4 style={{ textAlign: 'center' }}>
                       {GPA.toFixed(2)}
                     </Text>
-                    <Text>目前 GPA</Text>
+                    <Text style={{ textAlign: 'center', }}>目前 GPA</Text>
                   </View>
                 </View>
                 <View style={{
