@@ -4,7 +4,6 @@
 
 > 一個屬於台科人的 App
 
-
 <p>
     <a href="https://play.google.com/store/apps/details?id=com.splitline.ntustapp">
         <img src="https://rawgit.com/splitline/NTUSTapp/master/play-store.svg" width="300">
@@ -31,7 +30,12 @@ React Native ~~with Expo~~
 
 ## Release Notes
 
-### v1.0
+### v1.1.0
+- (優化) 殺死一些蟲蟲
+- (新增) 空教室查詢：點擊各個教室項目可查看整日狀態
+- (新增) 歷年成績：列出各學期 GPA 、排名
+
+### v1.0.0
 - (優化) 所有網路請求完全不透過 API，直接連至學校系統
 - (優化) APP 大小減少 7 成以上
 - (優化) Icon 變潮惹（？
