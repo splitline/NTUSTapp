@@ -85,11 +85,11 @@ public class VcodeOcr {
 		int i, j;
 		for (i = 0; i < bimg.getHeight(); i++) {
 			for (j = 0; j < bimg.getWidth(); j++) {
-				if (countNonWhite(bimg, j,  i) >= 10) {
+				if (countNonWhite(bimg, j, i) >= 10) {
 					// cover by non white tile
 					nimg.setPixel(j, i, 0xFFFFFFFF);
 				} else {
-					nimg.setPixel( j, i, bimg.getPixel(j, i));
+					nimg.setPixel(j, i, bimg.getPixel(j, i));
 				}
 			}
 		}
@@ -136,13 +136,13 @@ public class VcodeOcr {
 		int R;
 		for (i = 0; i < img.getHeight(); i++) {
 			for (j = 0; j < img.getWidth(); j++) {
-				R = getR(img, j,  i);
+				R = getR(img, j, i);
 				if (R > nthres) {
 					R = 255;
 				} else {
 					R = 0;
 				}
-				nimg.setPixel( j, i, 0xFF000000 | R | R << 8 | R << 16);
+				nimg.setPixel(j, i, 0xFF000000 | R | R << 8 | R << 16);
 			}
 		}
 
@@ -155,12 +155,12 @@ public class VcodeOcr {
 		int i, j;
 		for (i = 0; i < nimg.getHeight(); i++) {
 			for (j = 0; j < nimg.getWidth(); j++) {
-				nimg.setPixel(j, i , 0xFFFFFFFF);
+				nimg.setPixel(j, i, 0xFFFFFFFF);
 			}
 		}
 
 		for (Point p : blk) {
-			nimg.setPixel(p.x - minX, p.y - minY , 0xFF000000);
+			nimg.setPixel(p.x - minX, p.y - minY, 0xFF000000);
 		}
 
 		return nimg;
@@ -235,7 +235,7 @@ public class VcodeOcr {
 			res.addLast(new Point(x, y));
 		}
 
-		if (res.size() >= 5){
+		if (res.size() >= 5) {
 			lblk.add(renderBlock(res, minX, maxX, minY, maxY));
 		}
 
@@ -252,9 +252,9 @@ public class VcodeOcr {
 
 		for (j = 0; j < bimg.getWidth(); j++) {
 			for (i = 0; i < bimg.getHeight(); i++) {
-				if ((bimg.getPixel(j , i) & 0x000000FF) == 0) {
+				if ((bimg.getPixel(j, i) & 0x000000FF) == 0) {
 					// Black tile, init BFS
-					BFSonPoint(j, i );
+					BFSonPoint(j, i);
 				}
 			}
 		}
@@ -269,18 +269,27 @@ public class VcodeOcr {
 	}
 
 	public void classify() {
+		if(lblk.size() != 6){
+			ptRes = " ";
+			return;
+		}
+		
 		int rv;
 		String srv;
 
 		rscore = 0;
 		StringBuilder res = new StringBuilder();
+		int index = 0;
+		Boolean isNum;
 		for (Bitmap img : lblk) {
-			srv = ccl.classifyByMinScore(img);
+			if(index < 3) isNum = true;
+			else isNum = false;
+			srv = ccl.classifyByMinScore(img, isNum);
 			rv = ccl.mscore;
 			if (rv > threshold) {
 				// That's some problem
 				rscore += rv;
-				srv = ccl.classifyByMinNMatch(img);
+				srv = ccl.classifyByMinNMatch(img, isNum);
 				res.append(srv);
 				VcodeOcr cc = new VcodeOcr();
 				cc.setImage(ccl.prevImg);
@@ -294,6 +303,8 @@ public class VcodeOcr {
 				res.append(srv);
 				rscore += rv;
 			}
+
+			index++;
 		}
 
 		ptRes = res.toString();
