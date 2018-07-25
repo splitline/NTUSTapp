@@ -116,7 +116,7 @@ export default class ScoreScreen extends React.Component {
 
         ranks.forEach((rankStr, i) => {
           // 105　學年度第　1　學期學期年級(系)排名為第　64  　名，學期平均成績為：3.49  
-          let regex = new RegExp(/(.+)學年度第(.+)學期學期(.+)排名為第(.+)名，學期平均成績為：(.+)/);
+          let regex = new RegExp(/(.+)學年度第(.+)學期學期.+\((.+)\)排名為第(.+)名，學期平均成績為：(.+)/);
           let result = regex.exec(rankStr);
           if (result) {
             result = result.map((str) => str.trim());

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ListItem, Card, Text } from 'react-native-elements'
 import { View, Button, AsyncStorage, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import ScrollableTabView, { DefaultTabBar } from 'react-native-scrollable-tab-view';
 import Snackbar from 'react-native-snackbar';
 import cheerio from 'cheerio';
 import Login from '../utils/funcLogin'
@@ -117,7 +118,7 @@ export default class PastScoreScreen extends React.Component {
         let ranks = $("#score_list").find('font').html().split('<br>');
 
         ranks.forEach((rankStr, i) => {
-          // 105　學年度第　1　學期學期年級(系)排名為第　64  　名，學期平均成績為：3.49  
+          // Exapmle: 105　學年度第　1　學期學期年級(系)排名為第　64  　名，學期平均成績為：3.49  
           let regex = new RegExp(/(.+)學年度第(.+)學期學期.+\((.+)\)排名為第(.+)名，學期平均成績為：(.+)/);
           let result = regex.exec(rankStr);
           if (result) {
@@ -146,81 +147,84 @@ export default class PastScoreScreen extends React.Component {
   }
 
   render() {
-    const gpList = {
-      'A+': 4.3,
-      'A': 4,
-      'A-': 3.7,
-      'B+': 3.3,
-      'B': 3.0,
-      'B-': 2.7,
-      'C+': 2.3,
-      'C': 2,
-      'C-': 1.7,
-      'D': 1,
-      'E': 0,
-      'X': 0
-    };
-
-    var renderContext;
+    let renderContext;
 
     if (this.state.login === true) {
       var scoreList = [];
       for (semester in this.state.stuScore.rank_list) {
-        // scoreList.push(<Text key={semester} style={{ margin: 10 }}>{semester}</Text>);
+        // push a tab
         scoreList.push(
-          <Card
+          <ScrollView
+            tabLabel={`${semester.slice(0,-1)}-${semester.slice(-1,)}`}
             key={semester}
-            title={semester}
-            containerStyle={{ marginBottom: 10 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={() => this.updateScore()}
+              />
+            }
           >
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
-              <View>
-                <Text h4 style={{ textAlign: 'center', }}>
-                  {this.state.stuScore.rank_list[semester].gpa}
+            {/* semester GPA & rank overview */}
+            <Card
+              key={semester}
+              containerStyle={{ marginBottom: 10 }}
+            >
+              <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+                <View>
+                  <Text h4 style={{ textAlign: 'center', }}>
+                    {this.state.stuScore.rank_list[semester].gpa}
+                  </Text>
+                  <Text style={{ textAlign: 'center', }}>GPA</Text>
+                </View>
+                {
+                  // show all type of rank
+                  this.state.stuScore.rank_list[semester].ranks
+                    .map((r, i) => (
+                      <View key={i}>
+                        <Text h4 style={{ textAlign: 'center', }}>
+                          {r.rankN} 名
                       </Text>
-                <Text style={{ textAlign: 'center', }}>GPA</Text>
+                        <Text style={{ textAlign: 'center', }}>{r.rankType}排</Text>
+                      </View>
+                    ))
+                }
               </View>
-              {
-                this.state.stuScore.rank_list[semester].ranks
-                  .map((r, i) => (
-                    <View key={i}>
-                      <Text h4 style={{ textAlign: 'center', }}>
-                        {r.rankN} 名
-                      </Text>
-                      <Text style={{ textAlign: 'center', }}>{r.rankType}排</Text>
-                    </View>
-                  ))
-              }
-            </View>
-          </Card>
-        );
-        scoreList.push(
-          this.state.stuScore['score_history'][semester].map((l, i) => (
-            <ListItem
-              key={i}
-              title={l.name}
-              subtitle={l.id + "・" + l.credit + " 學分"}
-              badge={{ value: l.score }}
-            />
-          ))
+            </Card>
+            {/* semester GPA & rank overview */}
+            {
+              // list of subjects
+              this.state.stuScore['score_history'][semester].map((l, i) => (
+                <ListItem
+                  key={i}
+                  title={l.name}
+                  subtitle={l.id + "・" + l.credit + " 學分"}
+                  badge={{ value: l.score }}
+                />
+              ))
+            }
+          </ScrollView>
         );
       }
 
       renderContext = (
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={() => this.updateScore()}
-            />}>
-          {Object.keys(this.state.stuScore['score_history']).length !== 0 ?
-            (scoreList)
-            :
-            (<Card>
+        Object.keys(this.state.stuScore['score_history']).length !== 0 ?
+          (<ScrollableTabView
+            renderTabBar={() => <DefaultTabBar backgroundColor='rgb(255, 255, 255)' />}
+          >
+            {scoreList}
+          </ScrollableTabView>)
+          :
+          (<View
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={() => this.updateScore()}
+              />
+            }>
+            <Card>
               <Text>往下拉一下，讓你的成績載入進來</Text>
-            </Card>)
-          }
-        </ScrollView>
+            </Card>
+          </View>)
       )
     } else if (this.state.login === false) {
       renderContext = (
@@ -240,8 +244,6 @@ export default class PastScoreScreen extends React.Component {
       )
     }
 
-    return (
-      renderContext
-    );
+    return (renderContext);
   }
 }
