@@ -1,12 +1,15 @@
 import React from 'react';
 import { AppRegistry, Platform } from 'react-native';
 import { Button, Header } from 'react-native-elements';
-import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import { createStackNavigator, createDrawerNavigator, } from 'react-navigation';
 import LoginScreen from './Screen/LoginScreen';
 import ScoreScreen from './Screen/ScoreScreen';
 import PastScoreScreen from './Screen/PastScoreScreen';
 import EmptyClassroomScreen from './Screen/EmptyClassroomScreen';
 import TimetableScreen from './Screen/TimetableScreen';
+
+import DrawerComponent from './utils/DrawerComponent';
 
 export default class App extends React.Component {
   render() {
@@ -20,27 +23,34 @@ const DrawerNav = createDrawerNavigator({
     screen: ScoreScreen,
     navigationOptions: {
       drawerLabel: "成績查詢",
+      drawerIcon: ({tintColor}) => <Icon name="insert-chart" size={24} style={{color: tintColor}}/>
     }
   },
   PastScore: {
     screen: PastScoreScreen,
     navigationOptions: {
       drawerLabel: "歷年成績",
+      drawerIcon: ({tintColor}) => <Icon name="show-chart" size={24} style={{color: tintColor}}/>
     }
   },
   EmptyClassroom: {
     screen: EmptyClassroomScreen,
     navigationOptions: {
       drawerLabel: "空教室查詢",
+      drawerIcon: ({tintColor}) => <Icon name="room" size={24} style={{color: tintColor}}/>
     }
   },
   Timetable: {
     screen: TimetableScreen,
     navigationOptions: {
       drawerLabel: "個人課表",
+      drawerIcon: ({tintColor}) => <Icon name="event" size={24} style={{color: tintColor}}/>
     }
   }
-});
+}, {
+    contentComponent: props => <DrawerComponent {...props}/>,
+    // contentOptions: {}
+  });
 
 
 const StackNav = createStackNavigator({
@@ -49,7 +59,10 @@ const StackNav = createStackNavigator({
     navigationOptions: ({ navigation }) => ({
       header: (
         <Header
-          outerContainerStyles={{ borderBottomWidth: 0 }}
+          outerContainerStyles={{
+            borderBottomWidth: 0,
+            elevation: 5,
+          }}
           leftComponent={
             <Button
               clear
@@ -73,8 +86,6 @@ const StackNav = createStackNavigator({
               onPress={() => { navigation.navigate('Login') }}
             />
           }
-        // innerContainerStyles={{marginTop: Platform.OS === 'ios' ? 0 :  24}}
-        // outerContainerStyles={{height: 70}}
         />
       ),
     }),
@@ -105,7 +116,8 @@ AppRegistry.registerComponent('NTUSTappLite', () => App)
 //   StackNav{
 //     DrawerNav{
 //       ScoreScreen,
-//       PastScoreScreen
+//       PastScoreScreen,
+//       ...
 //     }
 //   }
 //   LoginScreen

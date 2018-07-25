@@ -155,7 +155,7 @@ export default class PastScoreScreen extends React.Component {
         // push a tab
         scoreList.push(
           <ScrollView
-            tabLabel={`${semester.slice(0,-1)}-${semester.slice(-1,)}`}
+            tabLabel={`${semester.slice(0, -1)}-${semester.slice(-1, )}`}
             key={semester}
             refreshControl={
               <RefreshControl
@@ -207,14 +207,17 @@ export default class PastScoreScreen extends React.Component {
       }
 
       renderContext = (
-        Object.keys(this.state.stuScore['score_history']).length !== 0 ?
-          (<ScrollableTabView
+          Object.keys(this.state.stuScore['score_history']).length !== 0 ?
+          (
+          <ScrollableTabView
             renderTabBar={() => <DefaultTabBar backgroundColor='rgb(255, 255, 255)' />}
+            
           >
             {scoreList}
-          </ScrollableTabView>)
+          </ScrollableTabView>
+          )
           :
-          (<View
+          (<ScrollView
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
@@ -224,7 +227,8 @@ export default class PastScoreScreen extends React.Component {
             <Card>
               <Text>往下拉一下，讓你的成績載入進來</Text>
             </Card>
-          </View>)
+          </ScrollView>)
+
       )
     } else if (this.state.login === false) {
       renderContext = (

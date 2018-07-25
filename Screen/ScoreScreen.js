@@ -1,6 +1,6 @@
 import React from 'react';
 import { ListItem, Card, Text } from 'react-native-elements';
-import { Slider, View, Button, AsyncStorage, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { Slider, View, Button, AsyncStorage, ScrollView, ActivityIndicator, DeviceEventEmitter, RefreshControl } from 'react-native';
 import cheerio from 'cheerio';
 import Snackbar from 'react-native-snackbar';
 import Login from '../utils/funcLogin';
@@ -144,14 +144,14 @@ export default class ScoreScreen extends React.Component {
   }
 
   componentWillMount() {
-    this.readAccountData();
-  }
-
-  componentWillReceiveProps() {
+    DeviceEventEmitter.addListener('loginSuccess',(e)=>{
+      this.readAccountData();
+    });
     this.readAccountData();
   }
 
   render() {
+    let login = this.state.login;
     const gpList = {
       'A+': this.state.gpaType == 1 ? (4.3) : (4),
       'A': 4,
@@ -169,7 +169,7 @@ export default class ScoreScreen extends React.Component {
 
     var renderContext;
 
-    if (this.state.login === true) {
+    if (login === true) {
       const nowSubjectNum = this.state.stuScore['score'].reduce((a, b) => a + (b['score'] in gpList), 0),
         totalSubjectNum = this.state.stuScore['score'].length,
         nowCredit = this.state.stuScore['score'].reduce((a, b) => a + (parseInt(b['credit']) * (b['score'] in gpList)), 0),
@@ -237,7 +237,7 @@ export default class ScoreScreen extends React.Component {
           }
         </ScrollView>
       )
-    } else if (this.state.login === false) {
+    } else if (login === false) {
       renderContext = (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text>還沒登入 Q_Q</Text>

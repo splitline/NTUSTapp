@@ -7,7 +7,7 @@ import {
   Animated,
   Easing,
   Image,
-  Alert,
+  DeviceEventEmitter,
   AsyncStorage
 } from 'react-native';
 import Snackbar from 'react-native-snackbar';
@@ -49,20 +49,23 @@ export default class ButtonSubmit extends Component {
           '@NTUSTapp:StuAccountData',
           JSON.stringify(this.props.data)
         );
+        let stuData = {
+          "StuName": $('#studentname').text(),
+          "StuInfo": $('#studentno').text() + "・" + $('#educode').text()
+        };
         AsyncStorage.setItem(
           '@NTUSTapp:StuData',
-          JSON.stringify({
-            "StuName": $('#studentname').text(),
-            "StuInfo": $('#studentno').text() + "・" + $('#educode').text()
-          })
+          JSON.stringify(stuData)
         );
         this._onGrow();
         setTimeout(() => {
           this.setState({ isLoading: false });
           this.buttonAnimated.setValue(0);
           this.growAnimated.setValue(0);
-          this.props.navigation.navigate('Score', {
-            success: true
+          DeviceEventEmitter.emit('loginSuccess', {});
+          this.props.navigation.navigate('Main', {
+            success: true,
+            StuData: stuData
           })
         }, 300);
       },
