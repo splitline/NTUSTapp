@@ -8,6 +8,7 @@ import ScoreScreen from './Screen/ScoreScreen';
 import PastScoreScreen from './Screen/PastScoreScreen';
 import EmptyClassroomScreen from './Screen/EmptyClassroomScreen';
 import TimetableScreen from './Screen/TimetableScreen';
+import AboutScreen from './Screen/AboutScreen';
 
 import DrawerComponent from './utils/DrawerComponent';
 
@@ -23,32 +24,32 @@ const DrawerNav = createDrawerNavigator({
     screen: ScoreScreen,
     navigationOptions: {
       drawerLabel: "成績查詢",
-      drawerIcon: ({tintColor}) => <Icon name="insert-chart" size={24} style={{color: tintColor}}/>
+      drawerIcon: ({ tintColor }) => <Icon name="insert-chart" size={24} style={{ color: tintColor }} />
     }
   },
   PastScore: {
     screen: PastScoreScreen,
     navigationOptions: {
       drawerLabel: "歷年成績",
-      drawerIcon: ({tintColor}) => <Icon name="show-chart" size={24} style={{color: tintColor}}/>
+      drawerIcon: ({ tintColor }) => <Icon name="show-chart" size={24} style={{ color: tintColor }} />
     }
   },
   EmptyClassroom: {
     screen: EmptyClassroomScreen,
     navigationOptions: {
       drawerLabel: "空教室查詢",
-      drawerIcon: ({tintColor}) => <Icon name="room" size={24} style={{color: tintColor}}/>
+      drawerIcon: ({ tintColor }) => <Icon name="room" size={24} style={{ color: tintColor }} />
     }
   },
   Timetable: {
     screen: TimetableScreen,
     navigationOptions: {
       drawerLabel: "個人課表",
-      drawerIcon: ({tintColor}) => <Icon name="event" size={24} style={{color: tintColor}}/>
+      drawerIcon: ({ tintColor }) => <Icon name="event" size={24} style={{ color: tintColor }} />
     }
   }
 }, {
-    contentComponent: props => <DrawerComponent {...props}/>,
+    contentComponent: props => <DrawerComponent {...props} />,
     // contentOptions: {}
   });
 
@@ -96,14 +97,25 @@ const RootStack = createStackNavigator(
   {
     Stack: {
       screen: StackNav,
+      navigationOptions : {
+        header: null
+      }
     },
     Login: {
       screen: LoginScreen,
+      navigationOptions : {
+        header: null
+      }
+    },
+    About: {
+      screen: AboutScreen,
+      navigationOptions : {
+        headerStyle: { height:50 },
+      }
     }
   },
   {
     mode: 'modal',
-    headerMode: 'none',
   }
 );
 

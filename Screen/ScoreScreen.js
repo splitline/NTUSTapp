@@ -143,7 +143,7 @@ export default class ScoreScreen extends React.Component {
       });
   }
 
-  componentWillMount() {
+  componentDidMount() {
     DeviceEventEmitter.addListener('loginSuccess',(e)=>{
       this.readAccountData();
     });

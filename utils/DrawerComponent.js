@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { DrawerItems, NavigationActions } from 'react-navigation';
-import { Text, ScrollView, View, AsyncStorage } from 'react-native';
+import { Text, ScrollView, View, AsyncStorage, TouchableNativeFeedback } from 'react-native';
 import { Divider } from 'react-native-elements'
 
 
@@ -22,13 +22,6 @@ class DrawerComponent extends Component {
     }
 
     componentWillMount = this.readAccountData();
-
-    navigateToScreen = (route) => () => {
-        const navigateAction = NavigationActions.navigate({
-            routeName: route
-        });
-        this.props.navigation.dispatch(navigateAction);
-    }
 
     render() {
 
@@ -65,6 +58,17 @@ class DrawerComponent extends Component {
                     </View>
                     <View>
                         <DrawerItems {...this.props} />
+                    </View>
+                    <Divider />
+                    <View style={{ marginVertical: 4 }}>
+                        <TouchableNativeFeedback
+                            onPress={() => { this.props.navigation.navigate('About'); }}>
+                            <View>
+                                <Text style={{ margin: 16, color: 'rgba(0,0,0,.87)', fontWeight: 'bold' }}>
+                                    關於
+                                </Text>
+                            </View>
+                        </TouchableNativeFeedback>
                     </View>
                 </ScrollView>
             </View>

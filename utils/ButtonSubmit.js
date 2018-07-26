@@ -11,6 +11,7 @@ import {
   AsyncStorage
 } from 'react-native';
 import Snackbar from 'react-native-snackbar';
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import Login from "./funcLogin";
 import spinner from '../images/Ripple-1.3s-30px.gif';
 
