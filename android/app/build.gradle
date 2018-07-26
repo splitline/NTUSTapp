@@ -106,8 +106,8 @@ android {
         applicationId "com.splitline.ntustapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "1.1.0"
+        versionCode 7
+        versionName "1.2.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
