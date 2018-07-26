@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
-import { View, Text, Linking, ScrollView, Image, Share } from 'react-native';
-import { Card, Divider, ListItem } from 'react-native-elements';
-import Dimensions from 'Dimensions';
+import { View, Text, Linking, ScrollView, Image, Share, BackHandler } from 'react-native';
+import { Card, Divider, ListItem } from 'react-native-elements';1
 import icon from '../images/icon.png';
 
-const DEVICE_WIDTH = Dimensions.get('window').width;
-
 export default class AboutScreen extends Component {
+
     constructor(props) {
         super(props);
     }
+
     render() {
-        const WIDTH = DEVICE_WIDTH - 150;
         return (
             <ScrollView>
                 <Card containerStyle={{ elevation: 3 }}>
@@ -42,12 +40,12 @@ export default class AboutScreen extends Component {
                         title="分享這個 App"
                         subtitle="(其實沒人會用這個功能吧)"
                         onPress={() => {
-                            Share.share({ message: 'NTUSTapp: https://play.google.com/store/apps/details?id=com.splitline.ntustapp', url:'https://play.google.com/store/apps/details?id=com.splitline.ntustapp'})
+                            Share.share({ message: 'NTUSTapp: https://play.google.com/store/apps/details?id=com.splitline.ntustapp', url: 'https://play.google.com/store/apps/details?id=com.splitline.ntustapp' })
                         }}
                     />
-                    <Divider/>
+                    <Divider />
                     <ListItem
-                        leftIcon={{ name: 'telegram', type:'font-awesome' }}
+                        leftIcon={{ name: 'telegram', type: 'font-awesome' }}
                         title="NTUSTapp Telegram 群組"
                         subtitle="不知道能幹嘛，總之進來玩(ˊ・ω・ˋ)"
                         onPress={() => {

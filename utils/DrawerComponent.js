@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DrawerItems, NavigationActions } from 'react-navigation';
+import { DrawerItems } from 'react-navigation';
 import { Text, ScrollView, View, AsyncStorage, TouchableNativeFeedback } from 'react-native';
 import { Divider } from 'react-native-elements'
 

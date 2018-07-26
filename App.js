@@ -47,75 +47,72 @@ const DrawerNav = createDrawerNavigator({
       drawerLabel: "個人課表",
       drawerIcon: ({ tintColor }) => <Icon name="event" size={24} style={{ color: tintColor }} />
     }
+  },
+  About: {
+    screen: AboutScreen,
   }
 }, {
-    contentComponent: props => <DrawerComponent {...props} />,
-    // contentOptions: {}
+    contentComponent: props =>
+      <DrawerComponent {...{
+        ...props,
+        items: props.items.filter(item => !(item.key === 'About')),
+      }} />
   });
 
 
-const StackNav = createStackNavigator({
-  Main: {
-    screen: DrawerNav,
-    navigationOptions: ({ navigation }) => ({
-      header: (
-        <Header
-          outerContainerStyles={{
-            borderBottomWidth: 0,
-            elevation: 5,
-          }}
-          leftComponent={
-            <Button
-              clear
-              icon={{
-                name: 'menu',
-                color: '#fff'
-              }}
-              title=""
-              onPress={() => { navigation.toggleDrawer() }}
-            />
-          }
-          centerComponent={{ text: 'NTUSTapp', style: { color: '#fff', fontSize: 18 } }}
-          rightComponent={
-            <Button
-              clear
-              icon={{
-                name: 'person',
-                color: '#fff'
-              }}
-              title=""
-              onPress={() => { navigation.navigate('Login') }}
-            />
-          }
-        />
-      ),
-    }),
-  }
-});
-
 const RootStack = createStackNavigator(
   {
-    Stack: {
-      screen: StackNav,
-      navigationOptions : {
-        header: null
-      }
+    // Main
+    Main: {
+      screen: DrawerNav,
+      navigationOptions: ({ navigation }) => ({
+        // header start
+        header: (
+          <Header
+            outerContainerStyles={{
+              borderBottomWidth: 0,
+              elevation: 5,
+            }}
+            leftComponent={
+              <Button
+                clear
+                icon={{
+                  name: 'menu',
+                  color: '#fff'
+                }}
+                title=""
+                onPress={() => { navigation.toggleDrawer() }}
+              />
+            }
+            centerComponent={{ text: 'NTUSTapp', style: { color: '#fff', fontSize: 18 } }}
+            rightComponent={
+              <Button
+                clear
+                icon={{
+                  name: 'person',
+                  color: '#fff'
+                }}
+                title=""
+                onPress={() => { navigation.navigate('Login') }}
+              />
+            }
+          />
+        ),
+        // header end
+      }),
     },
+
+    // Login
     Login: {
       screen: LoginScreen,
-      navigationOptions : {
-        header: null
-      }
-    },
-    About: {
-      screen: AboutScreen,
-      navigationOptions : {
-        headerStyle: { height:50 },
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: true,
       }
     }
   },
   {
-    mode: 'modal',
+    mode: 'modal'
   }
 );
 
