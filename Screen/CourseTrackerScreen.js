@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Slider, ScrollView, AsyncStorage } from 'react-native';
+import { View, Text, Slider, ScrollView, AsyncStorage, ActivityIndicator, Clipboard } from 'react-native';
 import { Card, Button, ListItem } from 'react-native-elements';
 import { TextField } from 'react-native-material-textfield';
 import Snackbar from 'react-native-snackbar';
@@ -87,10 +87,13 @@ export default class CourseTrackerScreen extends Component {
                     let { trackingCourses } = this.state;
                     trackingCourses[Object.keys(this.state.trackingCourses)[i]].data = peopleData;
                     this.setState({ trackingCourses });
-                    console.log(Object.keys(this.state.trackingCourses)[i], peopleData)
+                    // console.log(Object.keys(this.state.trackingCourses)[i], peopleData)
                 });
-
                 this.setState({ lookupLoading: false });
+                AsyncStorage.setItem(
+                    '@NTUSTapp:trackingCourses',
+                    JSON.stringify(this.state.trackingCourses)
+                );
             })
     }
 
@@ -148,14 +151,14 @@ export default class CourseTrackerScreen extends Component {
                         onChangeText={(courseInput) => this.setState({ courseInput })}
                     />
                     <Button
-                        title={"新增課程"}
+                        title="新增課程"
                         disabled={this.state.courseInput.trim().length != 9}
                         buttonStyle={{ height: 40 }}
                         onPress={this.addCourse}
                         loading={this.state.addLoading}
                     />
                     <Button
-                        title="查詢即時選課人數"
+                        title={`查詢 ${this.semester} 即時選課人數`}
                         loading={this.state.lookupLoading}
                         buttonStyle={{ height: 40, marginVertical: 10 }}
                         onPress={this.fetchCurrentPeople}
@@ -164,6 +167,7 @@ export default class CourseTrackerScreen extends Component {
                     <View style={{
                         flex: 1, alignItems: "center", flexDirection: 'row', justifyContent: 'center',
                     }}>
+
                         <Text>正式選課</Text>
                         <Slider
                             value={this.state.selectType}
@@ -190,11 +194,18 @@ export default class CourseTrackerScreen extends Component {
                                     key={course}
                                     title={course}
                                     subtitle={this.state.trackingCourses[course].name}
+                                    onPress={() => {
+                                        Clipboard.setString(course);
+                                        Snackbar.show({title:'課程代碼已經複製到剪貼簿'})
+                                    }}
                                     rightElement={
                                         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                                            <Text>
-                                                {this.state.trackingCourses[course].data.school} / {this.state.trackingCourses[course].data[this.state.selectType ? 'additionalSelectMax' : 'regularSelectMax']}
-                                            </Text>
+                                            {this.state.lookupLoading ?
+                                                <ActivityIndicator /> :
+                                                <Text>
+                                                    {this.state.trackingCourses[course].data.school} / {this.state.trackingCourses[course].data[this.state.selectType ? 'additionalSelectMax' : 'regularSelectMax']}
+                                                </Text>
+                                            }
                                             {this.state.edit &&
                                                 <Button
                                                     title="刪除"
