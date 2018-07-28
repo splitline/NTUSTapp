@@ -25,6 +25,12 @@ class DrawerComponent extends Component {
 
     render() {
 
+        const itemGroup = {
+            stuSystem: ['Score', 'PastScore', 'Timetable'],
+            tools: ['EmptyClassroom', 'CourseTracker'],
+            other: ['About']
+        }
+
         let StuData = this.state.StuData, login = this.state.login;
 
         if (this.props.navigation.state.params) {
@@ -56,19 +62,29 @@ class DrawerComponent extends Component {
                             )
                         }
                     </View>
+
                     <View>
-                        <DrawerItems {...this.props} />
+                        <DrawerItems {...{
+                            ...this.props,
+                            items: this.props.items.filter(item => itemGroup.stuSystem.includes(item.key)),
+                        }} />
+                    </View>
+
+                    <Divider style={{marginVertical:3}} />
+
+                    <View>
+                        <DrawerItems {...{
+                            ...this.props,
+                            items: this.props.items.filter(item => itemGroup.tools.includes(item.key)),
+                        }} />
                     </View>
                     <Divider />
-                    <View style={{ marginVertical: 4 }}>
-                        <TouchableNativeFeedback
-                            onPress={() => { this.props.navigation.navigate('About'); }}>
-                            <View>
-                                <Text style={{ margin: 16, color: 'rgba(0,0,0,.87)', fontWeight: 'bold' }}>
-                                    關於
-                                </Text>
-                            </View>
-                        </TouchableNativeFeedback>
+
+                    <View>
+                        <DrawerItems {...{
+                            ...this.props,
+                            items: this.props.items.filter(item => itemGroup.other.includes(item.key)),
+                        }} />
                     </View>
                 </ScrollView>
             </View>

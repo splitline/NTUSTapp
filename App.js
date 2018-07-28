@@ -3,12 +3,15 @@ import { AppRegistry, Platform } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { createStackNavigator, createDrawerNavigator, } from 'react-navigation';
+
+// Screens
 import LoginScreen from './Screen/LoginScreen';
 import ScoreScreen from './Screen/ScoreScreen';
 import PastScoreScreen from './Screen/PastScoreScreen';
 import EmptyClassroomScreen from './Screen/EmptyClassroomScreen';
 import TimetableScreen from './Screen/TimetableScreen';
 import AboutScreen from './Screen/AboutScreen';
+import CourseTrackerScreen from './Screen/CourseTrackerScreen';
 
 import DrawerComponent from './utils/DrawerComponent';
 
@@ -48,15 +51,22 @@ const DrawerNav = createDrawerNavigator({
       drawerIcon: ({ tintColor }) => <Icon name="event" size={24} style={{ color: tintColor }} />
     }
   },
+  CourseTracker: {
+    screen: CourseTrackerScreen,
+    navigationOptions: {
+      drawerLabel: "選課人數追蹤",
+      drawerIcon: ({ tintColor }) => <Icon name="center-focus-weak" size={24} style={{ color: tintColor }} />
+    }
+  },
   About: {
     screen: AboutScreen,
+    navigationOptions: {
+      drawerLabel: "關於",
+    }
   }
 }, {
     contentComponent: props =>
-      <DrawerComponent {...{
-        ...props,
-        items: props.items.filter(item => !(item.key === 'About')),
-      }} />
+      <DrawerComponent {...props} />
   });
 
 
