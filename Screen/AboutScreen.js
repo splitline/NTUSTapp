@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { View, Text, Linking, ScrollView, Image, Share, BackHandler } from 'react-native';
-import { Card, Divider, ListItem } from 'react-native-elements';1
+import { View, Text, Linking, ScrollView, Image, Share, TouchableOpacity } from 'react-native';
+import { Card, Divider, ListItem } from 'react-native-elements'; 1
 import icon from '../images/icon.png';
 
 export default class AboutScreen extends Component {
 
     constructor(props) {
         super(props);
+        this.state = { count: 0 };
     }
 
     render() {
@@ -14,7 +15,14 @@ export default class AboutScreen extends Component {
             <ScrollView>
                 <Card containerStyle={{ elevation: 3 }}>
                     <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <Image source={icon} style={{ height: 72, width: 72 }} />
+                        {
+                            this.state.count < 10 ?
+                                <TouchableOpacity onPress={() => this.setState({ count: this.state.count + 1 })}>
+                                    <Image source={icon} style={{ height: 72, width: 72 }} />
+                                </TouchableOpacity>
+                                :
+                                <Text style={{fontSize: 56}}>喵</Text>
+                        }
                         <View margin={8}>
                             <Text style={{ fontSize: 24, color: '#222' }}>NTUSTapp</Text>
                             <Text>一個屬於台科人的 App</Text>
