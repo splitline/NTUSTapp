@@ -100,7 +100,7 @@ export default class CourseTrackerScreen extends Component {
     addCourse = () => {
         this.setState({ courseInput: '' });
         let { trackingCourses, courseInput } = this.state;
-        courseInput = courseInput.trim();
+        courseInput = courseInput.trim().toUpperCase();
         if (courseInput in trackingCourses) {
             Snackbar.show({ 'title': '它已經在追蹤列表裡了' })
             return;
